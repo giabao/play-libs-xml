@@ -1,5 +1,7 @@
 .classpath
 .project
+.idea
+.idea_modules
 .cache
 *.class
 *.log
