@@ -101,6 +101,10 @@ trait SpecialReaders {
       }.filter(_.isDefined).map(_.get).toMap[K, V])
     }
   }
+
+  implicit object SOAPDateReader extends XMLReader[SOAPDate] {
+    def read(x: xml.NodeSeq): Option[SOAPDate] = if (x.isEmpty) None else Some(SOAPDate(x.text))
+  }
 }
 
 object BasicWriters extends BasicWriters
@@ -172,5 +176,9 @@ trait SpecialWriters {
           }.map(acc ++ _).getOrElse(acc)
       }
     }
+  }
+
+  implicit object SOAPDateWriter extends XMLWriter[SOAPDate] {
+    def write(d: SOAPDate, base: xml.NodeSeq): xml.NodeSeq = BasicWriters.StringWriter.write(d.toString, base)
   }
 }
