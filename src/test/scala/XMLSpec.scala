@@ -1,22 +1,21 @@
 import org.specs2.mutable._
 import play2.tools.xml._
-import scala.xml.Utility._
 import play2.tools.xml.DefaultImplicits._
 
-class EXMLSpec extends Specification {
+class XMLSpec extends Specification {
   case class Foo(id: Long, name: String, age: Int, amount: Float, isX: Boolean, opt: Option[Double], numbers: List[Int], map: Map[String, Short])
 
-  implicit object FooXMLF extends XMLFormatter[Foo] {
+  implicit object FooXMLF extends XMLConverter[Foo] {
     def read(x: xml.NodeSeq): Option[Foo] = {
-      for( id <- EXML.fromXML[Long](x \ "id");
-        name <- EXML.fromXML[String](x \ "name");
-        age <- EXML.fromXML[Int](x \ "age");
-        amount <- EXML.fromXML[Float](x \ "amount");
-        isX <- EXML.fromXML[Boolean](x \ "isX");
-        opt <- EXML.fromXML[Option[Double]](x \ "opt");
-        numbers <- EXML.fromXML[List[Int]](x \ "numbers" \ "nb");
-        map <- EXML.fromXML[Map[String, Short]](x \ "map" \ "item")
-      ) yield(Foo(id, name, age, amount, isX, opt, numbers, map))
+      for( id <- XML.fromXML[Long](x \ "id");
+        name <- XML.fromXML[String](x \ "name");
+        age <- XML.fromXML[Int](x \ "age");
+        amount <- XML.fromXML[Float](x \ "amount");
+        isX <- XML.fromXML[Boolean](x \ "isX");
+        opt <- XML.fromXML[Option[Double]](x \ "opt");
+        numbers <- XML.fromXML[List[Int]](x \ "numbers" \ "nb");
+        map <- XML.fromXML[Map[String, Short]](x \ "map" \ "item")
+      ) yield Foo(id, name, age, amount, isX, opt, numbers, map)
     }
 
     def write(f: Foo, base: xml.NodeSeq): xml.NodeSeq = {
@@ -26,16 +25,16 @@ class EXMLSpec extends Specification {
         <age>{ f.age }</age>
         <amount>{ f.amount }</amount>
         <isX>{ f.isX }</isX>
-        { EXML.toXML(f.opt, <opt/>) }
-        <numbers>{ EXML.toXML(f.numbers, <nb/>) }</numbers>
-        <map>{ EXML.toXML(f.map, <item/>) }</map>
+        { XML(f.opt, <opt/>) }
+        <numbers>{ XML(f.numbers, <nb/>) }</numbers>
+        <map>{ XML(f.map, <item/>) }</map>
       </foo>
     }
   }
 
-  "EXML" should {
+  "XML" should {
     "serialize XML" in {
-        EXML.toXML(Foo(1234L, "albert", 23, 123.456F, true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))) must beEqualToIgnoringSpace(
+        XML(Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))) must beEqualTo(
           <foo>
             <id>1234</id>
             <name>albert</name>
@@ -52,11 +51,11 @@ class EXMLSpec extends Specification {
               <item><key>beta</key><value>87</value></item>
             </map>
           </foo>
-        )
+        ).ignoreSpace
     }
 
     "deserialize XML with option nil=true" in {
-      EXML.fromXML[Foo](<foo>
+      XML.fromXML[Foo](<foo>
             <id>1234</id>
             <name>albert</name>
             <age>23</age>
@@ -71,11 +70,11 @@ class EXMLSpec extends Specification {
               <item><key>alpha</key><value>23</value></item>
               <item><key>beta</key><value>87</value></item>
             </map>
-          </foo>) must equalTo(Some(Foo(1234L, "albert", 23, 123.456F, true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
+          </foo>) must equalTo(Some(Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
     }
 
     "deserialize XML" in {
-      EXML.fromXML[Foo](<foo>
+      XML.fromXML[Foo](<foo>
             <id>1234</id>
             <name>albert</name>
             <age>23</age>
@@ -89,11 +88,11 @@ class EXMLSpec extends Specification {
               <item><key>alpha</key><value>23</value></item>
               <item><key>beta</key><value>87</value></item>
             </map>
-          </foo>) must equalTo(Some(Foo(1234L, "albert", 23, 123.456F, true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
+          </foo>) must equalTo(Some(Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
     }
 
     "deserialize XML to None if error" in {
-      EXML.fromXML[Foo](<foo>
+      XML.fromXML[Foo](<foo>
             <id>1234</id>
             <name>123</name>
             <age>fd</age>
@@ -103,37 +102,37 @@ class EXMLSpec extends Specification {
     }
 
     "deserialize Int accordingly to Some or None" in {
-      EXML.fromXML[Int](<ab>123</ab>) must equalTo(Some(123))
-      EXML.fromXML[Int](<ab>abc</ab>) must equalTo(None)
-      EXML.fromXML[Int](<ab>12</ab> \\ "tag") must equalTo(None)
+      XML.fromXML[Int](<ab>123</ab>) must equalTo(Some(123))
+      XML.fromXML[Int](<ab>abc</ab>) must equalTo(None)
+      XML.fromXML[Int](<ab>12</ab> \\ "tag") must equalTo(None)
     }
     
     "deserialize Short accordingly to Some or None" in {
-      EXML.fromXML[Short](<ab>123</ab>) must equalTo(Some(123))
-      EXML.fromXML[Short](<ab>abc</ab>) must equalTo(None)
-      EXML.fromXML[Short](<ab>12</ab> \\ "tag") must equalTo(None)
+      XML.fromXML[Short](<ab>123</ab>) must equalTo(Some(123))
+      XML.fromXML[Short](<ab>abc</ab>) must equalTo(None)
+      XML.fromXML[Short](<ab>12</ab> \\ "tag") must equalTo(None)
     }
     
     "deserialize Long accordingly to Some or None" in {
-      EXML.fromXML[Long](<ab>123</ab>) must equalTo(Some(123))
-      EXML.fromXML[Long](<ab>abc</ab>) must equalTo(None)
-      EXML.fromXML[Long](<ab>12</ab> \\ "tag") must equalTo(None)
+      XML.fromXML[Long](<ab>123</ab>) must equalTo(Some(123))
+      XML.fromXML[Long](<ab>abc</ab>) must equalTo(None)
+      XML.fromXML[Long](<ab>12</ab> \\ "tag") must equalTo(None)
     }
     
     "deserialize Float accordingly to Some or None" in {
-      EXML.fromXML[Float](<ab>123</ab>) must equalTo(Some(123))
-      EXML.fromXML[Float](<ab>abc</ab>) must equalTo(None)
-      EXML.fromXML[Float](<ab>12</ab> \\ "tag") must equalTo(None)
+      XML.fromXML[Float](<ab>123</ab>) must equalTo(Some(123))
+      XML.fromXML[Float](<ab>abc</ab>) must equalTo(None)
+      XML.fromXML[Float](<ab>12</ab> \\ "tag") must equalTo(None)
     }
     "deserialize Double accordingly to Some or None" in {
-      EXML.fromXML[Double](<ab>123</ab>) must equalTo(Some(123))
-      EXML.fromXML[Double](<ab>abc</ab>) must equalTo(None)
-      EXML.fromXML[Double](<ab>12</ab> \\ "tag") must equalTo(None)
+      XML.fromXML[Double](<ab>123</ab>) must equalTo(Some(123))
+      XML.fromXML[Double](<ab>abc</ab>) must equalTo(None)
+      XML.fromXML[Double](<ab>12</ab> \\ "tag") must equalTo(None)
     }
     "deserialize Boolean accordingly to Some or None" in {
-      EXML.fromXML[Boolean](<ab>true</ab>) must equalTo(Some(true))
-      EXML.fromXML[Boolean](<ab>abc</ab>) must equalTo(None)
-      EXML.fromXML[Boolean](<ab>12</ab> \\ "tag") must equalTo(None)
+      XML.fromXML[Boolean](<ab>true</ab>) must equalTo(Some(true))
+      XML.fromXML[Boolean](<ab>abc</ab>) must equalTo(None)
+      XML.fromXML[Boolean](<ab>12</ab> \\ "tag") must equalTo(None)
     }
   }
 }

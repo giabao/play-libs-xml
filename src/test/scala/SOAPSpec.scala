@@ -1,29 +1,29 @@
 import org.specs2.mutable._
 import play2.tools.xml._
-import scala.xml.Utility._
 import play2.tools.xml.DefaultImplicits._
-import scala.xml.{Attribute, NamespaceBinding}
+import scala.xml.NamespaceBinding
 
-class ESOAPSpec extends Specification {
+class SOAPSpec extends Specification {
   implicit val ns = NamespaceBinding(
     prefix = "test", 
     uri = "http://test.com/",
-    parent = ESOAP.SoapNS
+    parent = SOAP.SoapNS
   )
   case class Foo(id: Long, name: String, age: Int, amount: Float, isX: Boolean, opt: Option[Double], numbers: List[Int], map: Map[String, Short])
 
-  implicit object FooXMLF extends XMLFormatter[Foo] {
+  implicit object FooXMLF extends XMLConverter[Foo] {
     def read(x: xml.NodeSeq): Option[Foo] = {
-      for( foo <- (x \ "foo").headOption;
-        id <- EXML.fromXML[Long](foo \ "id");
-        name <- EXML.fromXML[String](foo \ "name");
-        age <- EXML.fromXML[Int](foo \ "age");
-        amount <- EXML.fromXML[Float](foo \ "amount");
-        isX <- EXML.fromXML[Boolean](foo \ "isX");
-        opt <- EXML.fromXML[Option[Double]](foo \ "opt");
-        numbers <- EXML.fromXML[List[Int]](foo \ "numbers" \ "nb");
-        map <- EXML.fromXML[Map[String, Short]](foo \ "map" \ "item")
-      ) yield(Foo(id, name, age, amount, isX, opt, numbers, map))
+      for(
+        foo     <- (x \ "foo").headOption;
+        id      <- XML.fromXML[Long](foo \ "id");
+        name    <- XML.fromXML[String](foo \ "name");
+        age     <- XML.fromXML[Int](foo \ "age");
+        amount  <- XML.fromXML[Float](foo \ "amount");
+        isX     <- XML.fromXML[Boolean](foo \ "isX");
+        opt     <- XML.fromXML[Option[Double]](foo \ "opt");
+        numbers <- XML.fromXML[List[Int]](foo \ "numbers" \ "nb");
+        map     <- XML.fromXML[Map[String, Short]](foo \ "map" \ "item")
+      ) yield Foo(id, name, age, amount, isX, opt, numbers, map)
     }
 
     def write(f: Foo, base: xml.NodeSeq): xml.NodeSeq = {
@@ -33,16 +33,18 @@ class ESOAPSpec extends Specification {
         <age>{ f.age }</age>
         <amount>{ f.amount }</amount>
         <isX>{ f.isX }</isX>
-        { EXML.toXML(f.opt, <opt/>) }
-        <numbers>{ EXML.toXML(f.numbers, <nb/>) }</numbers>
-        <map>{ EXML.toXML(f.map, <item/>) }</map>
+        { XML(f.opt, <opt/>) }
+        <numbers>{ XML(f.numbers, <nb/>) }</numbers>
+        <map>{ XML(f.map, <item/>) }</map>
       </foo>
     }
   }
 
-  "ESOAP" should {
+  "SOAP" should {
     "serialize SOAP" in {
-        ESOAP.toSOAP(Foo(1234L, "albert", 23, 123.456F, true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))) must beEqualToIgnoringSpace(
+        SOAP(
+          Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))
+        ) must beEqualTo(
           <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:test="http://test.com">
             <soapenv:Header/>
             <soapenv:Body>
@@ -64,11 +66,11 @@ class ESOAPSpec extends Specification {
             </foo>
             </soapenv:Body>
           </soapenv:Envelope>
-        )
+        ).ignoreSpace
     }
 
     "deserialize SOAP" in {
-      ESOAP.fromSOAP[Foo](
+      SOAP.fromSOAP[Foo](
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:test="http://test.com">
           <soapenv:Header/>
           <soapenv:Body>
@@ -89,21 +91,24 @@ class ESOAPSpec extends Specification {
             </map>
           </foo>
           </soapenv:Body>
-        </soapenv:Envelope>) must equalTo(Some(Foo(1234L, "albert", 23, 123.456F, true, Some(987.654), List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
+        </soapenv:Envelope>
+      ) must equalTo(Some(
+        Foo(1234L, "albert", 23, 123.456F, isX = true, Some(987.654), List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
     }
 
     "deserialize SOAP to None if error" in {
-      ESOAP.fromSOAP[Foo](<foo>
+      SOAP.fromSOAP[Foo](<foo>
             <id>1234</id>
             <name>123</name>
             <age>fd</age>
             <amount>float</amount>
             <isX>true</isX>
-          </foo>) must equalTo(None)
+          </foo>
+      ) must equalTo(None)
     }
 
     "deserialize SOAP fault that it previously generated" in {
-      val savon = ESOAP.toSOAP(
+      val savon = SOAP(
         SoapFault(
           faultcode = SoapFault.FAULTCODE_SERVER,
           faultstring = "Super error",
@@ -111,7 +116,7 @@ class ESOAPSpec extends Specification {
           detail = "erreur"
           )
         )
-      val fault = ESOAP.fromSOAP[SoapFault[String]](savon)
+      val fault = SOAP.fromSOAP[SoapFault[String]](savon)
       fault must beSome
       fault.get.faultcode must equalTo(SoapFault.FAULTCODE_SERVER)
       fault.get.faultstring must equalTo("Super error")
@@ -123,13 +128,11 @@ class ESOAPSpec extends Specification {
             <soapenv:Fault>
               <soapenv:faultstring xml:lang="?">2</soapenv:faultstring>
               <soapenv:faultactor>3</soapenv:faultactor>
-              <detail>
-                Message
-              </detail>
+              <detail>Message</detail>
             </soapenv:Fault>
           </soapenv:Body>
         </soapenv:Envelope>
-      val res = ESOAP.fromSOAP[SoapFault[String]](soapMessage)
+      val res = SOAP.fromSOAP[SoapFault[String]](soapMessage)
       res must beNone
     }
     "return None if faultstring parameter is missing" in {
@@ -138,13 +141,11 @@ class ESOAPSpec extends Specification {
             <soapenv:Fault>
               <soapenv:faultcode>1</soapenv:faultcode>
               <soapenv:faultactor>3</soapenv:faultactor>
-              <detail>
-                Message
-              </detail>
+              <detail>Message</detail>
             </soapenv:Fault>
           </soapenv:Body>
         </soapenv:Envelope>
-      val res = ESOAP.fromSOAP[SoapFault[String]](soapMessage)
+      val res = SOAP.fromSOAP[SoapFault[String]](soapMessage)
       res must beNone
     }
     "return None if faultactor parameter is missing" in {
@@ -159,7 +160,7 @@ class ESOAPSpec extends Specification {
             </soapenv:Fault>
           </soapenv:Body>
         </soapenv:Envelope>
-      val res = ESOAP.fromSOAP[SoapFault[String]](soapMessage)
+      val res = SOAP.fromSOAP[SoapFault[String]](soapMessage)
       res must beNone
     }
     "return None if detail parameter is missing" in {
@@ -172,7 +173,7 @@ class ESOAPSpec extends Specification {
             </soapenv:Fault>
           </soapenv:Body>
         </soapenv:Envelope>
-      val res = ESOAP.fromSOAP[SoapFault[String]](soapMessage)
+      val res = SOAP.fromSOAP[SoapFault[String]](soapMessage)
       res must beNone
     }
 
@@ -180,11 +181,11 @@ class ESOAPSpec extends Specification {
       case class ComplexObject(param1 : String, param2: String)
       implicit object ComplexObjectReader extends XMLReader[ComplexObject] {
         def read(x : xml.NodeSeq) : Option[ComplexObject] = {
-          for( msg <- (x \ "message").headOption; 
-               param1 <- EXML.fromXML[String](msg \ "param1"); 
-               param2 <- EXML.fromXML[String](msg \ "param2")  
-               )
-            yield(ComplexObject(param1, param2))
+          for(
+            msg <- (x \ "message").headOption;
+            param1 <- XML.fromXML[String](msg \ "param1");
+            param2 <- XML.fromXML[String](msg \ "param2")
+          ) yield ComplexObject(param1, param2)
         }        
       }
 
@@ -204,11 +205,11 @@ class ESOAPSpec extends Specification {
           </soapenv:Body>
         </soapenv:Envelope>
 
-      val fault = ESOAP.fromSOAP[SoapFault[ComplexObject]](soapMessage)
+      val fault = SOAP.fromSOAP[SoapFault[ComplexObject]](soapMessage)
       fault must beSome
       fault.get.faultcode must equalTo("1")
-      fault.get.detail.param1 must equalTo("Textual informations")
-      fault.get.detail.param2 must equalTo("More informations")
+      fault.get.detail.param1 must equalTo("Textual information")
+      fault.get.detail.param2 must equalTo("More information")
     }
   }
 }
