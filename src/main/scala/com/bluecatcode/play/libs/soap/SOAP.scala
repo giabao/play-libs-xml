@@ -7,11 +7,11 @@ import com.bluecatcode.play.libs.xml._
 object SOAP extends SOAP
 
 trait SOAP {
-  def apply[T](t: T, ns: NamespaceBinding, base: xml.Elem)(implicit r: XmlWriter[T]): xml.NodeSeq = {
+  def toSoap[T](t: T, ns: NamespaceBinding, base: xml.Elem)(implicit r: XmlWriter[T]): xml.NodeSeq = {
     DefaultImplicits.SoapEnvelopeWriter[T](r).write(SoapEnvelope(t)(ns), base)
   }
-  def apply[T](t: T, ns: NamespaceBinding = SoapNS)(implicit r: XmlWriter[T]): xml.NodeSeq = {
-    apply(t, ns, <envelope/>)
+  def toSoap[T](t: T, ns: NamespaceBinding = SoapNS)(implicit r: XmlWriter[T]): xml.NodeSeq = {
+    toSoap(t, ns, <envelope/>)
   }
 
   def fromSOAP[T](x: xml.NodeSeq)(implicit r: XmlReader[T]): Option[T] = {

@@ -1,17 +1,12 @@
 import com.bluecatcode.play.libs.soap.{SoapFault, SOAP, DefaultImplicits}
 import com.bluecatcode.play.libs.xml.{XmlConverter, XmlReader, Xml}
 import org.specs2.mutable._
-import play2.tools.xml._
 import DefaultImplicits._
 import scala.xml.NamespaceBinding
 
 class SOAPSpec extends Specification {
-  implicit val ns = NamespaceBinding(
-    prefix = "test", 
-    uri = "http://test.com/",
-    parent = SOAP.SoapNS
-  )
-  case class Foo(id: Long, name: String, age: Int, amount: Float, isX: Boolean, opt: Option[Double], numbers: List[Int], map: Map[String, Short])
+
+  case class Foo(id: Long, name: String, age: Int, amount: Float, isX: Boolean, opt: Option[Double], abs: Option[String], numbers: List[Int], map: Map[String, Short])
 
   implicit object FooXmlF extends XmlConverter[Foo] {
     def read(x: xml.NodeSeq): Option[Foo] = {
@@ -23,9 +18,10 @@ class SOAPSpec extends Specification {
         amount  <- Xml.fromXml[Float](foo \ "amount");
         isX     <- Xml.fromXml[Boolean](foo \ "isX");
         opt     <- Xml.fromXml[Option[Double]](foo \ "opt");
+        abs     <- Xml.fromXml[Option[String]](foo \ "abs");
         numbers <- Xml.fromXml[List[Int]](foo \ "numbers" \ "nb");
         map     <- Xml.fromXml[Map[String, Short]](foo \ "map" \ "item")
-      ) yield Foo(id, name, age, amount, isX, opt, numbers, map)
+      ) yield Foo(id, name, age, amount, isX, opt, abs, numbers, map)
     }
 
     def write(f: Foo, base: xml.NodeSeq): xml.NodeSeq = {
@@ -35,67 +31,58 @@ class SOAPSpec extends Specification {
         <age>{ f.age }</age>
         <amount>{ f.amount }</amount>
         <isX>{ f.isX }</isX>
-        { Xml(f.opt, <opt/>) }
-        <numbers>{ Xml(f.numbers, <nb/>) }</numbers>
-        <map>{ Xml(f.map, <item/>) }</map>
+        { Xml.toXml(f.opt, <opt/>) }
+        { Xml.toXml(f.abs, <abs/>) }
+        <numbers>{ Xml.toXml(f.numbers, <nb/>) }</numbers>
+        <map>{ Xml.toXml(f.map, <item/>) }</map>
       </foo>
     }
   }
 
+  val testObject = Foo(
+    1234L, "albert", 23, 123.456F, isX = true, Some(987.654), None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort)
+  )
+
+  val testNs = NamespaceBinding(prefix = "test", uri = "http://test.com/", parent = SOAP.SoapNS)
+
+  val testSoapMessage =
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:test="http://test.com/">
+      <soapenv:Header/>
+      <soapenv:Body>
+        <foo>
+          <id>1234</id>
+          <name>albert</name>
+          <age>23</age>
+          <amount>123.456</amount>
+          <isX>true</isX>
+          <opt>987.654</opt>
+          <abs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+          <numbers>
+            <nb>123</nb>
+            <nb>57</nb>
+          </numbers>
+          <map>
+            <item><key>alpha</key><value>23</value></item>
+            <item><key>beta</key><value>87</value></item>
+          </map>
+        </foo>
+      </soapenv:Body>
+    </soapenv:Envelope>
+
   "SOAP" should {
     "serialize SOAP" in {
-        SOAP(
-          Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))
-        ) must beEqualTo(
-          <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:test="http://test.com">
-            <soapenv:Header/>
-            <soapenv:Body>
-            <foo>
-              <id>1234</id>
-              <name>albert</name>
-              <age>23</age>
-              <amount>123.456</amount>
-              <isX>true</isX>
-              <opt xmlns:xsi="http://www.w3.org/2001/XmlSchema-instance" xsi:nil="true" />
-              <numbers>
-                <nb>123</nb>
-                <nb>57</nb>
-              </numbers>
-              <map>
-                <item><key>alpha</key><value>23</value></item>
-                <item><key>beta</key><value>87</value></item>
-              </map>
-            </foo>
-            </soapenv:Body>
-          </soapenv:Envelope>
-        ).ignoreSpace
+      SOAP.toSoap(
+        testObject, testNs
+      ) must beEqualTo(
+        testSoapMessage
+      ).ignoreSpace
     }
 
     "deserialize SOAP" in {
       SOAP.fromSOAP[Foo](
-        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:test="http://test.com">
-          <soapenv:Header/>
-          <soapenv:Body>
-          <foo>
-            <id>1234</id>
-            <name>albert</name>
-            <age>23</age>
-            <amount>123.456</amount>
-            <isX>true</isX>
-            <opt>987.654</opt>
-            <numbers>
-              <nb>123</nb>
-              <nb>57</nb>
-            </numbers>
-            <map>
-              <item><key>alpha</key><value>23</value></item>
-              <item><key>beta</key><value>87</value></item>
-            </map>
-          </foo>
-          </soapenv:Body>
-        </soapenv:Envelope>
-      ) must equalTo(Some(
-        Foo(1234L, "albert", 23, 123.456F, isX = true, Some(987.654), List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
+        testSoapMessage
+      ) must equalTo(Some(testObject)
+      ).ignoreSpace
     }
 
     "deserialize SOAP to None if error" in {
@@ -110,7 +97,7 @@ class SOAPSpec extends Specification {
     }
 
     "deserialize SOAP fault that it previously generated" in {
-      val savon = SOAP(
+      val message = SOAP.toSoap(
         SoapFault(
           faultcode = SoapFault.FAULTCODE_SERVER,
           faultstring = "Super error",
@@ -118,7 +105,7 @@ class SOAPSpec extends Specification {
           detail = "erreur"
           )
         )
-      val fault = SOAP.fromSOAP[SoapFault[String]](savon)
+      val fault = SOAP.fromSOAP[SoapFault[String]](message)
       fault must beSome
       fault.get.faultcode must equalTo(SoapFault.FAULTCODE_SERVER)
       fault.get.faultstring must equalTo("Super error")
@@ -199,8 +186,8 @@ class SOAPSpec extends Specification {
               <soapenv:faultactor>3</soapenv:faultactor>
               <detail>
                 <message>
-                  <param1>Textual informations</param1>
-                  <param2>More informations</param2>
+                  <param1>Textual information</param1>
+                  <param2>More information</param2>
                 </message>
               </detail>
             </soapenv:Fault>
