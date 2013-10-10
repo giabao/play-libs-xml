@@ -1,8 +1,8 @@
-name := "xmlsoap-ersatz"
+name := "play-libs-xml"
 
-organization := "play2.tools.xml"
+organization := "com.bluecatcode.play.libs.xml"
 
-version := "0.3.5-SNAPSHOT"
+version := "0.4.0-SNAPSHOT"
 
 scalaVersion := "2.10.3"
 

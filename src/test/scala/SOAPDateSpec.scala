@@ -1,3 +1,4 @@
+import com.bluecatcode.play.libs.soap.SOAPDate
 import java.lang.IllegalArgumentException
 import org.specs2.mutable._
 import play2.tools.xml._

@@ -1,9 +1,7 @@
-XML/SOAP Ersatz tools
-=====================
+XML and SOAP Play library
+=========================
 
-XML/SOAP Ersatz tools, for Scala to read/write XML/SOAP without code generation, annotations or whatever magic. 
-
-**This API is developed & used with Play Framework 2.0 Scala.**
+XML and SOAP Play library, for Scala to serialize/deserialize XML (and SOAP) without code generation or other magic.
 
 You may use this api if like me:
 - You don't like SOAP because it's not human-friendly at all, it's too verbose and the surrounding standards are just non-sense
@@ -17,16 +15,11 @@ You may use this api if like me:
 - It DOES NOT pretend to provide pure standard SOAP.
 - It DOES NOT generate WSDL so you must provide it yourself.
 - It just helps you mimic SOAP by providing a few tools and helpers to deserialize/serialize.
-- It just aims at being practical without needing deep knownledge of SOAP standards.
-- It can serialize/deserialize SOAP so it can also do it for XML...
-- It uses pure Scala XML library even if it's a bit incoherent sometimes. AntiXML could be cool too...
+- It just aims at being practical without needing deep knowledge of SOAP standards.
+- It can serialize/deserialize SOAP so it can also do it for Xml...
+- It uses pure Scala Xml library even if it's a bit incoherent sometimes. AntiXml could be cool too...
 
-_This is a draft module providing raw mechanisms. Don't hesitate to contribute to make it better ;)_
+More information on (https://github.com/pawelprazak/scala-xmlsoap-ersatz.git)
 
-More information+tuto in the [wiki](https://github.com/mandubian/scala-xmlsoap-ersatz/wiki)
-
-
-Have fun!  
-Pascal
-
+> **Credits to Pascal Voitot for previous version of this codebase**
 > **Credits to Étienne Vallette d'Osia for inspiring/tackling draft version of this code ;)**

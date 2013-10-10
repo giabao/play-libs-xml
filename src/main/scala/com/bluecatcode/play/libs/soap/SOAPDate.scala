@@ -1,4 +1,4 @@
-package play2.tools.xml
+package com.bluecatcode.play.libs.soap
 
 import java.util.Date
 import java.text.{ParseException, SimpleDateFormat, DateFormat}

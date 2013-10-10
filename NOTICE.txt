@@ -1,8 +1,9 @@
-XML/SOAP Ersatz tools, for Scala (developed & used with Play2 Scala Framework).
+XML and SOAP Play library - for Scala and Play Framework.
 
-  Scala tool to read/write XML/SOAP without code generation, annotations or whatever magic. 
+  Scala tool to serialize/deserialize XML (and SOAP) without code generation or other magic.
 
 Copyright 2012 Pascal Voitot (@mandubian pascal.voitot.dev@gmail.com)
+Copyright 2013 Paweł Prażak
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
