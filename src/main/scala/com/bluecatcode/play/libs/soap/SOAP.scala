@@ -2,6 +2,7 @@ package com.bluecatcode.play.libs.soap
 
 import scala.Some
 import scala.xml.NamespaceBinding
+import com.typesafe.scalalogging.slf4j._
 import com.bluecatcode.play.libs.xml._
 
 object SOAP extends SOAP
@@ -78,18 +79,18 @@ trait DefaultSOAPFormatters {
     }
   }
 
-  implicit def SoapFaultReader[T](implicit fmt: XmlReader[T], strR:XmlReader[String]) = new XmlReader[SoapFault[T]] {
+  implicit def SoapFaultReader[T](implicit fmt: XmlReader[T], strR:XmlReader[String]) = new XmlReader[SoapFault[T]] with Logging {
     def read(x: xml.NodeSeq): Option[SoapFault[T]] = {
       val envelope = x \\ "Fault"
       envelope.headOption.flatMap[SoapFault[T]]( {elt =>
         (
           strR.read(elt \ "faultcode"), strR.read(elt \ "faultstring"), strR.read(elt \ "faultactor"), fmt.read(elt \ "detail")
         ) match {
-          case (None,_,_,_) => {println("Code part missing in SOAP Fault"); None}
-          case (_,None,_,_) => {println("Message part missing in SOAP Fault"); None}
-          case (_,_,None,_) => {println("Actor part missing in SOAP Fault"); None}
-          case (_,_,_,None) => {println("Detail part missing in SOAP Fault"); None}
-          case (Some(code),Some(msg),Some(actor),Some(detail)) => {Some(SoapFault(code, msg, actor, detail))}
+          case (None,_,_,_) => { logger.debug("Code part missing in SOAP Fault"); None }
+          case (_,None,_,_) => { logger.debug("Message part missing in SOAP Fault"); None }
+          case (_,_,None,_) => { logger.debug("Actor part missing in SOAP Fault"); None }
+          case (_,_,_,None) => { logger.debug("Detail part missing in SOAP Fault"); None }
+          case (Some(code),Some(msg),Some(actor),Some(detail)) => { Some(SoapFault(code, msg, actor, detail)) }
           case _ => None
         }
       })
