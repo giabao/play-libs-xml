@@ -9,6 +9,7 @@ object ApplicationBuild extends Build {
   val appOrganization = "com.bluecatcode.play.libs.xml"
 
   val appDependencies = Seq(
+    "com.typesafe" %% "scalalogging-slf4j" % "1.0.1",
     "org.specs2" %% "specs2" % "2.2.3" % "test"
   )
 
