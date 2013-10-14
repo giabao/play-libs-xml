@@ -76,6 +76,8 @@ trait SpecialReaders {
     }
   }
 
+  import scala.language.higherKinds
+
   implicit def traversableReader[F[_], A](implicit bf: generic.CanBuildFrom[F[_], A, F[A]], r: XmlReader[A]) = new XmlReader[F[A]] {
     def read(x: xml.NodeSeq): Option[F[A]] = {
       val builder = bf()
