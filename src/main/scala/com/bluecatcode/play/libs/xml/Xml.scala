@@ -82,9 +82,7 @@ trait SpecialReaders {
     def read(x: xml.NodeSeq): Option[F[A]] = {
       val builder = bf()
       x.foreach {
-        n => r.read(n).foreach {
-          builder += _
-        }
+        n => r.read(n) foreach builder.+=
       }
       Some(builder.result())
     }
