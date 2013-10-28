@@ -2,8 +2,8 @@ package com.bluecatcode.play.libs.soap
 
 import scala.Some
 import scala.xml.NamespaceBinding
-import com.typesafe.scalalogging.slf4j._
 import com.bluecatcode.play.libs.xml._
+import org.slf4j.LoggerFactory
 
 object SOAP extends SOAP
 
@@ -54,7 +54,8 @@ object DefaultImplicits extends DefaultImplicits
 trait DefaultImplicits extends DefaultSOAPFormatters with BasicReaders with SpecialReaders with BasicWriters with SpecialWriters
 
 trait DefaultSOAPFormatters {
-	
+  private lazy val logger = LoggerFactory getLogger getClass.getName
+
   implicit def SoapEnvelopeReader[T](implicit reader: XmlReader[T]) = new XmlReader[SoapEnvelope[T]] {
     def read(x: xml.NodeSeq): Option[SoapEnvelope[T]] = {
       x.collectFirst { case x:xml.Elem if x.label == "Envelope" => x }
@@ -79,7 +80,7 @@ trait DefaultSOAPFormatters {
     }
   }
 
-  implicit def SoapFaultReader[T](implicit fmt: XmlReader[T], strR:XmlReader[String]) = new XmlReader[SoapFault[T]] with Logging {
+  implicit def SoapFaultReader[T](implicit fmt: XmlReader[T], strR:XmlReader[String]) = new XmlReader[SoapFault[T]] {
     def read(x: xml.NodeSeq): Option[SoapFault[T]] = {
       val envelope = x \\ "Fault"
       envelope.headOption.flatMap[SoapFault[T]]( {elt =>

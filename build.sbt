@@ -11,7 +11,7 @@ scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-feat
 javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.7", "-target", "1.7", "-Xlint:unchecked", "-Xlint:deprecation")
 
 libraryDependencies ++= Seq(
-  "com.typesafe"    %% "scalalogging-slf4j" % "1.0.1",
+  "org.slf4j"        % "slf4j-api"          % "1.7.5",
   "org.specs2"      %% "specs2"             % "2.2.3"   % "test"
 )
 
