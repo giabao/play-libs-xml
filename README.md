@@ -19,7 +19,18 @@ You may use this api if like me:
 - It can serialize/deserialize SOAP so it can also do it for XML...
 - It uses pure Scala XML library even if it's a bit incoherent sometimes. AntiXML could be cool too...
 
-More information on (https://github.com/pawelprazak/play-libs-xml.git)
+More information on https://github.com/giabao/scala-soap
 
-> **Credits to Pascal Voitot for previous version of this codebase**
-> **Credits to Étienne Vallette d'Osia for inspiring/tackling draft version of this code ;)**
+### Install
+In Sbt: `libraryDependencies += "com.sandinh" %% "scala-soap" % "0.9.0"`
+### Changelogs
+##### v0.9.0
+First version.
+
+### Licence
+This software is licensed under the Apache 2 license:
+http://www.apache.org/licenses/LICENSE-2.0
+
+Credits to Pascal Voitot and Paweł Prażak for previous version of this codebase
+
+Credits to Étienne Vallette d'Osia for inspiring/tackling draft version of this code ;)
