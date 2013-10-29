@@ -65,9 +65,7 @@ trait SpecialReaders {
   implicit def OptionReader[T](implicit r: XmlReader[T]) = new XmlReader[Option[T]] {
     def read(x: xml.NodeSeq): Option[Option[T]] = {
       x.collectFirst {
-        case e: xml.Elem => e
-      }.map {
-        e =>
+        case e: xml.Elem =>
           if (e.attributes.exists {
             a => a.key == "nil" && a.value.text == "true"
           }) None
