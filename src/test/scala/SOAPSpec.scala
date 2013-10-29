@@ -99,7 +99,7 @@ class SOAPSpec extends Specification {
     "deserialize SOAP fault that it previously generated" in {
       val message = SOAP.toSoap(
         SoapFault(
-          faultcode = SoapFault.FAULTCODE_SERVER,
+          faultcode = SoapFault.FaultCode.Server,
           faultstring = "Super error",
           faultactor = "http://uriToError.com",
           detail = "erreur"
@@ -107,7 +107,7 @@ class SOAPSpec extends Specification {
         )
       val fault = SOAP.fromSOAP[SoapFault[String]](message)
       fault must beSome
-      fault.get.faultcode must equalTo(SoapFault.FAULTCODE_SERVER)
+      fault.get.faultcode must equalTo(SoapFault.FaultCode.Server)
       fault.get.faultstring must equalTo("Super error")
     }
 

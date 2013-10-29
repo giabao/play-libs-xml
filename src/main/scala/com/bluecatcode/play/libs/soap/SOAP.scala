@@ -38,14 +38,16 @@ case class SoapFault[T](
 )
 
 object SoapFault {
-		// Found an invalid namespace for the SOAP Envelope element
-	val FAULTCODE_VERSION_MISMATCH = "SOAP-ENV:VersionMismatch" 
-	// An immediate child element of the Header element, with the mustUnderstand attribute set to "1", was not understood
-	val FAULTCODE_MUST_UNDERSTAND = "SOAP-ENV:MustUnderstand"
-	// The message was incorrectly formed or contained incorrect information
-	val FAULTCODE_CLIENT = "SOAP-ENV:Client"
-	// There was a problem with the server so the message could not proceed
-	val FAULTCODE_SERVER = "SOAP-ENV:Server"
+  object FaultCode {
+    /** Found an invalid namespace for the SOAP Envelope element */
+    val VersionMismatch = "SOAP-ENV:VersionMismatch"
+    /** An immediate child element of the Header element, with the mustUnderstand attribute set to "1", was not understood */
+    val MustUnderstand = "SOAP-ENV:MustUnderstand"
+    /** The message was incorrectly formed or contained incorrect information */
+    val Client = "SOAP-ENV:Client"
+    /** There was a problem with the server so the message could not proceed */
+    val Server = "SOAP-ENV:Server"
+  }
 }
 
 
@@ -87,11 +89,11 @@ trait DefaultSOAPFormatters {
         (
           strR.read(elt \ "faultcode"), strR.read(elt \ "faultstring"), strR.read(elt \ "faultactor"), fmt.read(elt \ "detail")
         ) match {
-          case (None,_,_,_) => { logger.debug("Code part missing in SOAP Fault"); None }
-          case (_,None,_,_) => { logger.debug("Message part missing in SOAP Fault"); None }
-          case (_,_,None,_) => { logger.debug("Actor part missing in SOAP Fault"); None }
-          case (_,_,_,None) => { logger.debug("Detail part missing in SOAP Fault"); None }
-          case (Some(code),Some(msg),Some(actor),Some(detail)) => { Some(SoapFault(code, msg, actor, detail)) }
+          case (None,_,_,_) => logger.debug("Code part missing in SOAP Fault"); None
+          case (_,None,_,_) => logger.debug("Message part missing in SOAP Fault"); None
+          case (_,_,None,_) => logger.debug("Actor part missing in SOAP Fault"); None
+          case (_,_,_,None) => logger.debug("Detail part missing in SOAP Fault"); None
+          case (Some(code),Some(msg),Some(actor),Some(detail)) => Some(SoapFault(code, msg, actor, detail))
           case _ => None
         }
       })
