@@ -15,7 +15,9 @@ import scala.xml.NamespaceBinding
 trait WS[P, R] {
   protected def url: String
 
-  final def call(param: P, ns: NamespaceBinding, hdrs: (String, String)*)
+  def call(param: P)(implicit w: XmlWriter[P], r: XmlReader[R]): Future[R]
+
+  protected final def call(param: P, ns: NamespaceBinding, hdrs: (String, String)*)
                 (implicit w: XmlWriter[P], r: XmlReader[R]): Future[R] = {
     val s = SOAP.toSoap(param, ns).buildString(stripComments = true)
     //println(s"request: $s")

@@ -22,7 +22,7 @@ You may use this api if like me:
 More information on https://github.com/giabao/scala-soap
 
 ### Install
-In Sbt: `libraryDependencies += "com.sandinh" %% "scala-soap" % "1.0.0"`
+In Sbt: `libraryDependencies += "com.sandinh" %% "scala-soap" % "1.1.0"`
 
 ### Changelogs
 ##### v1.0.0
