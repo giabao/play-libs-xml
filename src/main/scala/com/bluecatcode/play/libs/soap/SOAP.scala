@@ -8,21 +8,17 @@ import org.slf4j.LoggerFactory
 object SOAP extends SOAP
 
 trait SOAP {
-  def toSoap[T](t: T, ns: NamespaceBinding, base: xml.Elem)(implicit r: XmlWriter[T]): xml.NodeSeq = {
-    DefaultImplicits.SoapEnvelopeWriter[T](r).write(SoapEnvelope(t)(ns), base)
-  }
-  def toSoap[T](t: T, ns: NamespaceBinding = SoapNS)(implicit r: XmlWriter[T]): xml.NodeSeq = {
-    toSoap(t, ns, <envelope/>)
-  }
+  def toSoap[T](t: T, ns: NamespaceBinding = SoapNS)(implicit r: XmlWriter[T]): xml.Elem =
+    DefaultImplicits.SoapEnvelopeWriter[T](r).write(SoapEnvelope(t)(ns), base = null)
 
-  def fromSOAP[T](x: xml.NodeSeq)(implicit r: XmlReader[T]): Option[T] = {
+  def fromSOAP[T](x: xml.NodeSeq)(implicit r: XmlReader[T]): Option[T] =
     DefaultImplicits.SoapEnvelopeReader[T](r).read(x) match {
       case Some(SoapEnvelope(t)) => Some(t)
       case None => None
     }
-	}
 
 	val SoapNS = xml.NamespaceBinding("soapenv", "http://schemas.xmlsoap.org/soap/envelope/", xml.TopScope)
+  val SoapNS12 = xml.NamespaceBinding("soapenv", "http://www.w3.org/2003/05/soap-envelope", xml.TopScope)
 }
 
 
@@ -72,6 +68,7 @@ trait DefaultSOAPFormatters {
   }
 
   implicit def SoapEnvelopeWriter[T](implicit fmt: XmlWriter[T]) = new XmlWriter[SoapEnvelope[T]] {
+    /** @param base not used */
     def write(st: SoapEnvelope[T], base: xml.NodeSeq) = {
       val env =
         <soapenv:Envelope>
