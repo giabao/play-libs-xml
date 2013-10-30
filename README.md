@@ -22,8 +22,14 @@ You may use this api if like me:
 More information on https://github.com/giabao/scala-soap
 
 ### Install
-In Sbt: `libraryDependencies += "com.sandinh" %% "scala-soap" % "0.9.0"`
+In Sbt: `libraryDependencies += "com.sandinh" %% "scala-soap" % "1.0.0"`
+
 ### Changelogs
+##### v1.0.0
++ Change package to com.sandinh
++ Add com.sandinh.soap.WS. Usage: see [WSSpec](https://github.com/giabao/scala-soap/blob/master/src/test/scala/com/sandinh/soap/WSSpec.scala)
++ Optional depends on "play" (require if you use WS)
+
 ##### v0.9.0
 First version.
 
