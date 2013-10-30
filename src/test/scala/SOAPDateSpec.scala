@@ -1,6 +1,6 @@
 import java.lang.IllegalArgumentException
 import org.specs2.mutable._
-import com.bluecatcode.play.libs.soap.SOAPDate
+import com.sandinh.soap.SOAPDate
 
 class SOAPDateSpec extends Specification {
 

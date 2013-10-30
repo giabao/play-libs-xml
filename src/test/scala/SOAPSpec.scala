@@ -1,7 +1,7 @@
-import com.bluecatcode.play.libs.soap.{SoapFault, SOAP, DefaultImplicits}
-import com.bluecatcode.play.libs.xml.{XmlConverter, XmlReader, Xml}
+import com.sandinh.soap.{SoapFault, SOAP}
+import com.sandinh.xml.{XmlConverter, XmlReader, Xml}
 import org.specs2.mutable._
-import DefaultImplicits._
+import com.sandinh.soap.DefaultImplicits._
 import scala.xml.NamespaceBinding
 
 class SOAPSpec extends Specification {

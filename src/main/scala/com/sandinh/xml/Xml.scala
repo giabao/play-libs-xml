@@ -1,9 +1,9 @@
-package com.bluecatcode.play.libs.xml
+package com.sandinh.xml
 
-import scala.collection._
 import scala.util.Try
 import scala.xml.Attribute
-import com.bluecatcode.play.libs.soap.SOAPDate
+import com.sandinh.soap.SOAPDate
+import scala.collection.generic.CanBuildFrom
 
 trait XmlReader[T] {
   def read(x: xml.NodeSeq): Option[T]
@@ -76,7 +76,7 @@ trait SpecialReaders {
 
   import scala.language.higherKinds
 
-  implicit def traversableReader[F[_], A](implicit bf: generic.CanBuildFrom[F[_], A, F[A]], r: XmlReader[A]) = new XmlReader[F[A]] {
+  implicit def traversableReader[F[_], A](implicit bf: CanBuildFrom[F[_], A, F[A]], r: XmlReader[A]) = new XmlReader[F[A]] {
     def read(x: xml.NodeSeq): Option[F[A]] = {
       val builder = bf()
       x.foreach {
@@ -86,8 +86,8 @@ trait SpecialReaders {
     }
   }
 
-  implicit def mapReader[K, V](implicit rk: XmlReader[K], rv: XmlReader[V]): XmlReader[collection.immutable.Map[K, V]] = new XmlReader[collection.immutable.Map[K, V]] {
-    def read(x: xml.NodeSeq): Option[collection.immutable.Map[K, V]] = {
+  implicit def mapReader[K, V](implicit rk: XmlReader[K], rv: XmlReader[V]): XmlReader[Map[K, V]] = new XmlReader[Map[K, V]] {
+    def read(x: xml.NodeSeq): Option[Map[K, V]] = {
       Some(x.collect {
         case e: xml.Elem =>
           for (

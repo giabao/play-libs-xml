@@ -1,4 +1,4 @@
-package com.bluecatcode.play.libs.soap
+package com.sandinh.soap
 
 import java.util.Date
 import java.text.{ParseException, SimpleDateFormat, DateFormat}

@@ -1,7 +1,6 @@
 import org.specs2.mutable._
-import com.bluecatcode.play.libs.xml.{XmlConverter, Xml}
-import com.bluecatcode.play.libs.soap.DefaultImplicits
-import DefaultImplicits._
+import com.sandinh.xml.{XmlConverter, Xml}
+import com.sandinh.soap.DefaultImplicits._
 
 class XmlSpec extends Specification {
   case class Foo(id: Long, name: String, age: Int, amount: Float, isX: Boolean, opt: Option[Double], numbers: List[Int], map: Map[String, Short])

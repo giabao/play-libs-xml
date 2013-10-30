@@ -1,15 +1,14 @@
-package com.bluecatcode.play.libs.soap
+package com.sandinh.soap
 
-import scala.Some
 import scala.xml.NamespaceBinding
-import com.bluecatcode.play.libs.xml._
+import com.sandinh.xml._
 import org.slf4j.LoggerFactory
 
 object SOAP extends SOAP
 
 trait SOAP {
   def toSoap[T](t: T, ns: NamespaceBinding = SoapNS)(implicit r: XmlWriter[T]): xml.Elem =
-    DefaultImplicits.SoapEnvelopeWriter[T](r).write(SoapEnvelope(t)(ns), base = null)
+    DefaultImplicits.SoapEnvelopeWriter[T](r).write(SoapEnvelope(t)(ns), xml.NodeSeq.Empty)
 
   def fromSOAP[T](x: xml.NodeSeq)(implicit r: XmlReader[T]): Option[T] =
     DefaultImplicits.SoapEnvelopeReader[T](r).read(x) match {
@@ -17,8 +16,8 @@ trait SOAP {
       case None => None
     }
 
-	val SoapNS = xml.NamespaceBinding("soapenv", "http://schemas.xmlsoap.org/soap/envelope/", xml.TopScope)
-  val SoapNS12 = xml.NamespaceBinding("soapenv", "http://www.w3.org/2003/05/soap-envelope", xml.TopScope)
+	val SoapNS = NamespaceBinding("soapenv", "http://schemas.xmlsoap.org/soap/envelope/", xml.TopScope)
+  val SoapNS12 = NamespaceBinding("soapenv", "http://www.w3.org/2003/05/soap-envelope", xml.TopScope)
 }
 
 
