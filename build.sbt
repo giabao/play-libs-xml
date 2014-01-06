@@ -14,8 +14,8 @@ resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases"
 
 libraryDependencies ++= Seq(
   "org.slf4j"           % "slf4j-api"       % "1.7.5",
-  "com.typesafe.play"   %% "play"           % "2.2.0"   % "optional",
-  "org.specs2"          %% "specs2"         % "2.2.3"   % "test"
+  "com.typesafe.play"   %% "play"           % "2.2.1"   % "optional",
+  "org.specs2"          %% "specs2"         % "2.3.7"   % "test"
 )
 
 publishTo := {
@@ -32,8 +32,7 @@ publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
 
-pomExtra := (
-  <url>https://github.com/giabao/scala-soap</url>
+pomExtra := <url>https://github.com/giabao/scala-soap</url>
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -66,4 +65,4 @@ pomExtra := (
     <developer>
       <name>Étienne Vallette d'Osia</name>
     </developer>
-  </developers>)
+  </developers>
