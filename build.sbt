@@ -2,7 +2,7 @@ name := "scala-soap"
 
 organization := "com.sandinh"
 
-version := "1.1.0"
+version := "1.1.1"
 
 scalaVersion := "2.10.3"
 
@@ -14,8 +14,8 @@ resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases"
 
 libraryDependencies ++= Seq(
   "org.slf4j"           % "slf4j-api"       % "1.7.5",
-  "com.typesafe.play"   %% "play"           % "2.2.1"   % "optional",
-  "org.specs2"          %% "specs2"         % "2.3.7"   % "test"
+  "com.typesafe.play"   %% "play"           % "2.2.2"   % "optional",
+  "org.specs2"          %% "specs2"         % "2.3.8"   % "test"
 )
 
 publishTo := {

@@ -26,6 +26,9 @@ In Sbt: `libraryDependencies += "com.sandinh" %% "scala-soap" % "1.1.0"`
 
 ### Changelogs
 ##### v1.0.0
++ Only update play 2.2.1 to 2.2.2
+
+##### v1.0.0
 + Change package to com.sandinh
 + Add com.sandinh.soap.WS. Usage: see [WSSpec](https://github.com/giabao/scala-soap/blob/master/src/test/scala/com/sandinh/soap/WSSpec.scala)
 + Optional depends on "play" (require if you use WS)
