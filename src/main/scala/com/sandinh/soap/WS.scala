@@ -36,7 +36,9 @@ trait WS[P, R] {
   }
 }
 
-class SoapWS11[P, R](val url: String, action: String) extends WS[P, R] {
+trait WS11[P, R] extends WS[P, R] {
+  protected def action: String
+
   @inline private def ct = CONTENT_TYPE -> "text/xml; charset=utf-8"
   @inline private def actionHeader = ("SOAPAction", "\"" + action + "\"")
 
@@ -44,9 +46,13 @@ class SoapWS11[P, R](val url: String, action: String) extends WS[P, R] {
     call(param, SOAP.SoapNS, ct, actionHeader)
 }
 
-class SoapWS12[P, R](val url: String) extends WS[P, R] {
+class SoapWS11[P, R](val url: String, val action: String) extends WS11[P, R]
+
+trait WS12[P, R] extends WS[P, R] {
   @inline private def ct = CONTENT_TYPE -> "application/soap+xml; charset=utf-8"
 
   def call(param: P)(implicit w: XmlWriter[P], r: XmlReader[R]): Future[R] =
     call(param, SOAP.SoapNS12, ct)
 }
+
+class SoapWS12[P, R](val url: String) extends WS12[P, R]
