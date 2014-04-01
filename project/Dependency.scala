@@ -3,7 +3,7 @@ import sbt._
 object Dependency {
   object V {
     val slf4j   = "1.7.5"
-    val specs   = "2.3.8"
+    val specs   = "2.3.10"
     val play    = "2.2.2"
   }
 
