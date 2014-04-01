@@ -1,8 +1,6 @@
-/**
- * @author giabao
- * created: 2013-10-30 10:13
- * (c) 2011-2013 sandinh.com
- */
+/** @author giabao
+  * created: 2013-10-30 10:13
+  * (c) 2011-2013 sandinh.com */
 package com.sandinh.soap
 
 import com.sandinh.xml.{XmlReader, XmlWriter}
@@ -17,13 +15,13 @@ trait WS[P, R] {
 
   def call(param: P)(implicit w: XmlWriter[P], r: XmlReader[R]): Future[R]
 
-  protected final def call(param: P, ns: NamespaceBinding, hdrs: (String, String)*)
-                (implicit w: XmlWriter[P], r: XmlReader[R]): Future[R] = {
+  protected final def call(param: P, ns: NamespaceBinding, hdrs: (String, String)*)   // format: OFF
+                          (implicit w: XmlWriter[P], r: XmlReader[R]): Future[R] = { // format: ON
     val s = SOAP.toSoap(param, ns).buildString(stripComments = true)
     //println(s"request: $s")
     val data = ("<?xml version='1.0' encoding='UTF-8'?>" + s).getBytes("UTF-8")
     PlayWS.url(url).
-      withHeaders(hdrs :+ (CONTENT_LENGTH -> data.length.toString) :_*).
+      withHeaders(hdrs :+ (CONTENT_LENGTH -> data.length.toString): _*).
       post(data).
       map { res =>
         //println(s"response: ${res.body}")
@@ -38,7 +36,7 @@ trait WS[P, R] {
   }
 }
 
-class SoapWS11[P, R](val url: String, action: String) extends WS[P, R]{
+class SoapWS11[P, R](val url: String, action: String) extends WS[P, R] {
   @inline private def ct = CONTENT_TYPE -> "text/xml; charset=utf-8"
   @inline private def actionHeader = ("SOAPAction", "\"" + action + "\"")
 
@@ -46,7 +44,7 @@ class SoapWS11[P, R](val url: String, action: String) extends WS[P, R]{
     call(param, SOAP.SoapNS, ct, actionHeader)
 }
 
-class SoapWS12[P, R](val url: String) extends WS[P, R]{
+class SoapWS12[P, R](val url: String) extends WS[P, R] {
   @inline private def ct = CONTENT_TYPE -> "application/soap+xml; charset=utf-8"
 
   def call(param: P)(implicit w: XmlWriter[P], r: XmlReader[R]): Future[R] =

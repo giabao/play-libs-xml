@@ -7,7 +7,8 @@ class XmlSpec extends Specification {
 
   implicit object FooXmlF extends XmlConverter[Foo] {
     def read(x: xml.NodeSeq): Option[Foo] = {
-      for( id <- Xml.fromXml[Long](x \ "id");
+      for (
+        id <- Xml.fromXml[Long](x \ "id");
         name <- Xml.fromXml[String](x \ "name");
         age <- Xml.fromXml[Int](x \ "age");
         amount <- Xml.fromXml[Float](x \ "amount");
@@ -34,71 +35,77 @@ class XmlSpec extends Specification {
 
   "Xml" should {
     "serialize XML" in {
-        Xml.toXml(Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))) must beEqualTo(
-          <foo>
-            <id>1234</id>
-            <name>albert</name>
-            <age>23</age>
-            <amount>123.456</amount>
-            <isX>true</isX>
-            <opt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
-            <numbers>
-              <nb>123</nb>
-              <nb>57</nb>
-            </numbers>
-            <map>
-              <item><key>alpha</key><value>23</value></item>
-              <item><key>beta</key><value>87</value></item>
-            </map>
-          </foo>
-        ).ignoreSpace
+      Xml.toXml(Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))) must beEqualTo(
+        <foo>
+          <id>1234</id>
+          <name>albert</name>
+          <age>23</age>
+          <amount>123.456</amount>
+          <isX>true</isX>
+          <opt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+          <numbers>
+            <nb>123</nb>
+            <nb>57</nb>
+          </numbers>
+          <map>
+            <item><key>alpha</key><value>23</value></item>
+            <item><key>beta</key><value>87</value></item>
+          </map>
+        </foo>
+      ).ignoreSpace
     }
 
     "deserialize XML with option nil=true" in {
-      Xml.fromXml[Foo](<foo>
-            <id>1234</id>
-            <name>albert</name>
-            <age>23</age>
-            <amount>123.456</amount>
-            <isX>true</isX>
-            <opt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
-            <numbers>
-              <nb>123</nb>
-              <nb>57</nb>
-            </numbers>
-            <map>
-              <item><key>alpha</key><value>23</value></item>
-              <item><key>beta</key><value>87</value></item>
-            </map>
-          </foo>) must equalTo(Some(Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
+      Xml.fromXml[Foo](
+        <foo>
+          <id>1234</id>
+          <name>albert</name>
+          <age>23</age>
+          <amount>123.456</amount>
+          <isX>true</isX>
+          <opt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+          <numbers>
+            <nb>123</nb>
+            <nb>57</nb>
+          </numbers>
+          <map>
+            <item><key>alpha</key><value>23</value></item>
+            <item><key>beta</key><value>87</value></item>
+          </map>
+        </foo>
+      ) must equalTo(Some(Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
     }
 
     "deserialize XML" in {
-      Xml.fromXml[Foo](<foo>
-            <id>1234</id>
-            <name>albert</name>
-            <age>23</age>
-            <amount>123.456</amount>
-            <isX>true</isX>
-            <numbers>
-              <nb>123</nb>
-              <nb>57</nb>
-            </numbers>
-            <map>
-              <item><key>alpha</key><value>23</value></item>
-              <item><key>beta</key><value>87</value></item>
-            </map>
-          </foo>) must equalTo(Some(Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
+      Xml.fromXml[Foo](
+        <foo>
+          <id>1234</id>
+          <name>albert</name>
+          <age>23</age>
+          <amount>123.456</amount>
+          <isX>true</isX>
+          <numbers>
+            <nb>123</nb>
+            <nb>57</nb>
+          </numbers>
+          <map>
+            <item><key>alpha</key><value>23</value></item>
+            <item><key>beta</key><value>87</value></item>
+          </map>
+        </foo>
+      ) must equalTo(Some(Foo(1234L, "albert", 23, 123.456F, isX = true, None, List(123, 57), Map("alpha" -> 23.toShort, "beta" -> 87.toShort))))
     }
 
     "deserialize XML to None if error" in {
-      Xml.fromXml[Foo](<foo>
-            <id>1234</id>
-            <name>123</name>
-            <age>fd</age>
-            <amount>float</amount>
-            <isX>true</isX>
-          </foo>) must equalTo(None)
+      Xml.fromXml[Foo](
+        <foo>
+          <id>1234</id>
+          <name>123</name>
+          <age>fd</age>
+          <amount>float</amount>
+          <isX>true</isX>
+        </foo>
+      ) must equalTo(None)
     }
 
     "deserialize Int accordingly to Some or None" in {
@@ -106,19 +113,19 @@ class XmlSpec extends Specification {
       Xml.fromXml[Int](<ab>abc</ab>) must equalTo(None)
       Xml.fromXml[Int](<ab>12</ab> \\ "tag") must equalTo(None)
     }
-    
+
     "deserialize Short accordingly to Some or None" in {
       Xml.fromXml[Short](<ab>123</ab>) must equalTo(Some(123))
       Xml.fromXml[Short](<ab>abc</ab>) must equalTo(None)
       Xml.fromXml[Short](<ab>12</ab> \\ "tag") must equalTo(None)
     }
-    
+
     "deserialize Long accordingly to Some or None" in {
       Xml.fromXml[Long](<ab>123</ab>) must equalTo(Some(123))
       Xml.fromXml[Long](<ab>abc</ab>) must equalTo(None)
       Xml.fromXml[Long](<ab>12</ab> \\ "tag") must equalTo(None)
     }
-    
+
     "deserialize Float accordingly to Some or None" in {
       Xml.fromXml[Float](<ab>123</ab>) must equalTo(Some(123))
       Xml.fromXml[Float](<ab>abc</ab>) must equalTo(None)

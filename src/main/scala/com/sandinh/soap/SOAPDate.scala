@@ -26,7 +26,8 @@ object SOAPDate {
     } catch {
       case e: ParseException =>
         throw new IllegalArgumentException(
-          s"Expected $dateText to be in supported date format ($longFormatTemplate or $shortFormatTemplate)")
+          s"Expected $dateText to be in supported date format ($longFormatTemplate or $shortFormatTemplate)"
+        )
     }
   }
 }
