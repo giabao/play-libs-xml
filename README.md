@@ -25,7 +25,12 @@ More information on https://github.com/giabao/scala-soap
 In Sbt: `libraryDependencies += "com.sandinh" %% "scala-soap" % "1.1.0"`
 
 ### Changelogs
-##### v1.0.0
+##### v1.1.2
++ reformat code using scalariform
++ add traits WS11 & WS12
++ update scala 2.10.4
+
+##### v1.1.1
 + Only update play 2.2.1 to 2.2.2
 
 ##### v1.0.0
