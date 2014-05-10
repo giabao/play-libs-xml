@@ -3,14 +3,14 @@
   * (c) 2011-2013 sandinh.com */
 package com.sandinh.soap
 
-import org.specs2.mutable._
 import com.sandinh.xml.{Xml, XmlReader, XmlWriter}
 import com.sandinh.soap.DefaultImplicits._
 import scala.xml.NodeSeq
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import play.api.test.{WithApplication, PlaySpecification}
 
-class WSSpec extends Specification {
+class WSSpec extends PlaySpecification {
 
   /** @see [[http://www.webservicex.net/CurrencyConvertor.asmx?op=ConversionRate]] */
   object CurrencyConvertor {
@@ -48,7 +48,7 @@ class WSSpec extends Specification {
 
     val timeOut = Duration(2, MINUTES)
 
-    "callable" in {
+    "callable" in new WithApplication {
       //      Try{ Await.result(WS11.call(param), timeOut) } should beSuccessfulTry.which(_.ConversionRateResult > 10000)
       Await.result(WS11.call(param), timeOut).ConversionRateResult should greaterThan(10000.toDouble)
       Await.result(WS12.call(param), timeOut).ConversionRateResult should greaterThan(10000.toDouble)

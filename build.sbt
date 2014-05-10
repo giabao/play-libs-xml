@@ -2,14 +2,11 @@ name := "scala-soap"
 
 organization := "com.sandinh"
 
-version := "1.1.2"
+version := "1.2.0"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.0"
 
-crossScalaVersions := Seq(
-  //  "2.11.0-RC3", TODO enable for Play 2.3. @see https://github.com/playframework/playframework/pull/2470
-  "2.10.4"
-)
+crossScalaVersions := Seq("2.11.0", "2.10.4")
 
 scalacOptions ++= Seq(
   "-encoding", "UTF-8",

@@ -22,9 +22,14 @@ You may use this api if like me:
 More information on https://github.com/giabao/scala-soap
 
 ### Install
-In Sbt: `libraryDependencies += "com.sandinh" %% "scala-soap" % "1.1.0"`
+add to build.sbt:
+`libraryDependencies += "com.sandinh" %% "scala-soap" % "1.2.0"`
 
 ### Changelogs
+##### v1.2.0
++ cross compile to scala 2.10 & 2.11
++ update optional dependency `play 2.2.2` to `play-ws 2.3.0-RC1`
+
 ##### v1.1.2
 + reformat code using scalariform
 + add traits WS11 & WS12
