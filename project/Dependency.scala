@@ -3,8 +3,8 @@ import sbt._
 object Dependency {
   object V {
     val slf4j   = "1.7.6"
-    val specs   = "2.3.11"
-    val play    = "2.3.0-RC1"
+    val specs   = "2.3.12"
+    val play    = "2.3.0-RC2"
   }
 
   private val compile = Seq(

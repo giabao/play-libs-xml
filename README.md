@@ -26,6 +26,9 @@ add to build.sbt:
 `libraryDependencies += "com.sandinh" %% "scala-soap" % "1.2.0"`
 
 ### Changelogs
+##### v1.2.1
++ update scala 2.11.1, play-ws (optional dependency) 2.3.0-RC2
+
 ##### v1.2.0
 + cross compile to scala 2.10 & 2.11
 + update optional dependency `play 2.2.2` to `play-ws 2.3.0-RC1`

@@ -2,11 +2,11 @@ name := "scala-soap"
 
 organization := "com.sandinh"
 
-version := "1.2.0"
+version := "1.2.1"
 
-scalaVersion := "2.11.0"
+scalaVersion := "2.11.1"
 
-crossScalaVersions := Seq("2.11.0", "2.10.4")
+crossScalaVersions := Seq("2.11.1", "2.10.4")
 
 scalacOptions ++= Seq(
   "-encoding", "UTF-8",
