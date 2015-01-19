@@ -1,4 +1,3 @@
-import java.lang.IllegalArgumentException
 import org.specs2.mutable._
 import com.sandinh.soap.SOAPDate
 

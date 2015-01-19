@@ -2,8 +2,9 @@ package com.sandinh.xml
 
 import scala.util.Try
 import scala.xml.Attribute
-import com.sandinh.soap.SOAPDate
+import com.sandinh.soap.{DefaultImplicits, SOAPDate}
 import scala.collection.generic.CanBuildFrom
+import scala.language.{implicitConversions, higherKinds}
 
 trait XmlReader[T] {
   def read(x: xml.NodeSeq): Option[T]
@@ -23,10 +24,7 @@ trait Xml {
   def fromXml[T](x: xml.NodeSeq)(implicit r: XmlReader[T]): Option[T] = r.read(x)
 }
 
-object BasicReaders extends BasicReaders
-
 trait BasicReaders {
-
   import scala.util.control.Exception._
 
   implicit object StringReader extends XmlReader[String] {
@@ -56,13 +54,10 @@ trait BasicReaders {
   implicit object BooleanReader extends XmlReader[Boolean] {
     def read(x: xml.NodeSeq): Option[Boolean] = if (x.isEmpty) None else Try(x.text.toBoolean).toOption
   }
-
 }
 
-object SpecialReaders extends SpecialReaders
-
 trait SpecialReaders {
-  implicit def OptionReader[T](implicit r: XmlReader[T]) = new XmlReader[Option[T]] {
+  implicit def OptionReader[T](implicit r: XmlReader[T]): XmlReader[Option[T]] = new XmlReader[Option[T]] {
     def read(x: xml.NodeSeq): Option[Option[T]] = {
       x.collectFirst {
         case e: xml.Elem =>
@@ -74,9 +69,7 @@ trait SpecialReaders {
     }
   }
 
-  import scala.language.higherKinds
-
-  implicit def traversableReader[F[_], A](implicit bf: CanBuildFrom[F[_], A, F[A]], r: XmlReader[A]) = new XmlReader[F[A]] {
+  implicit def traversableReader[F[_], A](implicit bf: CanBuildFrom[F[_], A, F[A]], r: XmlReader[A]): XmlReader[F[A]] = new XmlReader[F[A]] {
     def read(x: xml.NodeSeq): Option[F[A]] = {
       val builder = bf()
       x.foreach {
@@ -103,10 +96,7 @@ trait SpecialReaders {
   }
 }
 
-object BasicWriters extends BasicWriters
-
 trait BasicWriters {
-
   implicit object StringWriter extends XmlWriter[String] {
     def write(s: String, base: xml.NodeSeq): xml.NodeSeq = base.collectFirst {
       case e: xml.Elem => e.copy(child = xml.Text(s))
@@ -139,13 +129,10 @@ trait BasicWriters {
 
 }
 
-object SpecialWriters extends SpecialWriters
-
 trait SpecialWriters {
-
   val xsiNS = xml.NamespaceBinding("xsi", "http://www.w3.org/2001/XMLSchema-instance", xml.TopScope)
 
-  implicit def optionWriter[T](implicit writer: XmlWriter[T]) = new XmlWriter[Option[T]] {
+  implicit def optionWriter[T](implicit writer: XmlWriter[T]): XmlWriter[Option[T]] = new XmlWriter[Option[T]] {
     def write(option: Option[T], base: xml.NodeSeq) = {
       option match {
         case None => base.collectFirst {
@@ -156,13 +143,13 @@ trait SpecialWriters {
     }
   }
 
-  implicit def traversableWriter[T](implicit w: XmlWriter[T]) = new XmlWriter[Traversable[T]] {
+  implicit def traversableWriter[T](implicit w: XmlWriter[T]): XmlWriter[Traversable[T]] = new XmlWriter[Traversable[T]] {
     def write(t: Traversable[T], base: xml.NodeSeq) = {
       t.foldLeft(xml.NodeSeq.Empty)((acc, n) => acc ++ w.write(n, base))
     }
   }
 
-  implicit def mapWriter[K, V](implicit kw: XmlWriter[K], vw: XmlWriter[V]) = new XmlWriter[Map[K, V]] {
+  implicit def mapWriter[K, V](implicit kw: XmlWriter[K], vw: XmlWriter[V]): XmlWriter[Map[K, V]] = new XmlWriter[Map[K, V]] {
     def write(m: Map[K, V], base: xml.NodeSeq) = {
       m.foldLeft(xml.NodeSeq.Empty) {
         (acc, n) =>
@@ -175,6 +162,6 @@ trait SpecialWriters {
   }
 
   implicit object SOAPDateWriter extends XmlWriter[SOAPDate] {
-    def write(d: SOAPDate, base: xml.NodeSeq): xml.NodeSeq = BasicWriters.StringWriter.write(d.toString, base)
+    def write(d: SOAPDate, base: xml.NodeSeq): xml.NodeSeq = DefaultImplicits.StringWriter.write(d.toString, base)
   }
 }

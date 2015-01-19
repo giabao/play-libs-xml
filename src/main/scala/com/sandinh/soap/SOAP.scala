@@ -1,14 +1,15 @@
 package com.sandinh.soap
 
-import scala.xml.NamespaceBinding
+import scala.language.implicitConversions
+import scala.xml.{Elem, NamespaceBinding}
 import com.sandinh.xml._
 import org.slf4j.LoggerFactory
 
 object SOAP extends SOAP
 
 trait SOAP {
-  def toSoap[T](t: T, ns: NamespaceBinding = SoapNS)(implicit r: XmlWriter[T]): xml.Elem =
-    DefaultImplicits.SoapEnvelopeWriter[T](r).write(SoapEnvelope(t)(ns), xml.NodeSeq.Empty)
+  def toSoap[T](t: T, ns: NamespaceBinding = SoapNS)(implicit w: XmlWriter[T]): xml.Elem =
+    DefaultImplicits.SoapEnvelopeWriter[T](w).write(SoapEnvelope(t)(ns), xml.NodeSeq.Empty).asInstanceOf[Elem]
 
   def fromSOAP[T](x: xml.NodeSeq)(implicit r: XmlReader[T]): Option[T] =
     DefaultImplicits.SoapEnvelopeReader[T](r).read(x) match {
@@ -44,14 +45,12 @@ object SoapFault {
   }
 }
 
-object DefaultImplicits extends DefaultImplicits
-
-trait DefaultImplicits extends DefaultSOAPFormatters with BasicReaders with SpecialReaders with BasicWriters with SpecialWriters
+object DefaultImplicits extends DefaultSOAPFormatters with BasicReaders with SpecialReaders with BasicWriters with SpecialWriters
 
 trait DefaultSOAPFormatters {
   private lazy val logger = LoggerFactory getLogger getClass.getName
 
-  implicit def SoapEnvelopeReader[T](implicit reader: XmlReader[T]) = new XmlReader[SoapEnvelope[T]] {
+  implicit def SoapEnvelopeReader[T](implicit reader: XmlReader[T]): XmlReader[SoapEnvelope[T]] = new XmlReader[SoapEnvelope[T]] {
     def read(x: xml.NodeSeq): Option[SoapEnvelope[T]] = {
       x.collectFirst { case x: xml.Elem if x.label == "Envelope" => x }
         .flatMap { env =>
@@ -64,7 +63,7 @@ trait DefaultSOAPFormatters {
     }
   }
 
-  implicit def SoapEnvelopeWriter[T](implicit fmt: XmlWriter[T]) = new XmlWriter[SoapEnvelope[T]] {
+  implicit def SoapEnvelopeWriter[T](implicit fmt: XmlWriter[T]): XmlWriter[SoapEnvelope[T]] = new XmlWriter[SoapEnvelope[T]] {
     /** @param base not used */
     def write(st: SoapEnvelope[T], base: xml.NodeSeq) = {
       val env =
@@ -76,7 +75,7 @@ trait DefaultSOAPFormatters {
     }
   }
 
-  implicit def SoapFaultReader[T](implicit fmt: XmlReader[T], strR: XmlReader[String]) = new XmlReader[SoapFault[T]] {
+  implicit def SoapFaultReader[T](implicit fmt: XmlReader[T], strR: XmlReader[String]): XmlReader[SoapFault[T]] = new XmlReader[SoapFault[T]] {
     def read(x: xml.NodeSeq): Option[SoapFault[T]] = {
       val envelope = x \\ "Fault"
       envelope.headOption.flatMap[SoapFault[T]]({ elt =>
@@ -98,7 +97,7 @@ trait DefaultSOAPFormatters {
     }
   }
 
-  implicit def SoapFaultWriter[T](implicit fmt: XmlWriter[T]) = new XmlWriter[SoapFault[T]] {
+  implicit def SoapFaultWriter[T](implicit fmt: XmlWriter[T]): XmlWriter[SoapFault[T]] = new XmlWriter[SoapFault[T]] {
     def write(fault: SoapFault[T], base: xml.NodeSeq) =
       <soapenv:Fault>
         <faultcode>{ fault.faultcode }</faultcode>
@@ -106,6 +105,5 @@ trait DefaultSOAPFormatters {
         <faultactor>{ fault.faultactor }</faultactor>
         <detail>{ Xml.toXml(fault.detail) }</detail>
       </soapenv:Fault>
-
   }
 }
