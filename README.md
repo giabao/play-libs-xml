@@ -26,6 +26,10 @@ add to build.sbt:
 `libraryDependencies += "com.sandinh" %% "scala-soap" % "1.2.0"`
 
 ### Changelogs
+##### v1.3.1
++ only update play 2.3.9, scala 2.11.6, scala-xml 1.0.4
++ remove crossBuild for scala 2.10
+
 ##### v1.3.0
 + update scala 2.11.5, sbt 0.13.7, slf4j-api 1.7.10, play-ws (optional dependency) 2.3.7
 + add scala-xml 1.0.3 as a dependency for scala-soap _2.11
