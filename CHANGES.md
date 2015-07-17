@@ -1,4 +1,7 @@
 ### Changelogs
+##### v1.4.0
++ update play 2.4.2 (optional dependency). Note play 2.4.x require java 8
+
 ##### v1.3.1
 + only update play 2.3.9, scala 2.11.6, scala-xml 1.0.4
 + remove crossBuild for scala 2.10
