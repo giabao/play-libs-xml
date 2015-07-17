@@ -17,9 +17,9 @@ object SOAPDate {
   def apply(date: Date) = new SOAPDate(date, longDateFormatter)
   def apply(dateText: String) = new SOAPDate(textToDate(dateText), longDateFormatter)
 
-  def textToDate(dateText: String) = {
+  def textToDate(dateText: String): Date = {
     try {
-      if (dateText.size == shortFormatTemplate.size)
+      if (dateText.length == shortFormatTemplate.length)
         shortDateFormatter.parse(dateText)
       else
         longDateFormatter.parse(dateText)
