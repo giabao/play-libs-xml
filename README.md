@@ -1,5 +1,6 @@
 XML and SOAP Play library
 =========================
+[![Build Status](https://travis-ci.org/giabao/scala-soap.svg)](https://travis-ci.org/giabao/scala-soap)
 
 XML and SOAP Play library, for Scala to serialize/deserialize XML (and SOAP) without code generation or other magic.
 
