@@ -1,6 +1,7 @@
 /** @author giabao
   * created: 2013-10-30 10:13
-  * (c) 2011-2013 sandinh.com */
+  * (c) 2011-2013 sandinh.com
+  */
 package com.sandinh.soap
 
 import com.sandinh.xml.{XmlReader, XmlWriter}
