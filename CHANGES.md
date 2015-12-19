@@ -1,4 +1,9 @@
 ### Changelogs
+##### v1.5.0
++ break binary compatibility. You must re-compile your code when update scala-soap to this version.
++ SOAPDate - moved from using java.util.Date (not thread safe) to org.joda.time.DateTime
++ depend on joda-time is now mandatory, not optional transitively from play-ws
+
 ##### v1.4.1
 + update play 2.4.6 (optional dependency), scala-xml 1.0.5, slf4j-api 1.7.13
 
