@@ -1,33 +1,22 @@
 package com.sandinh.soap
 
-import java.util.Date
-import java.text.{ParseException, SimpleDateFormat, DateFormat}
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.ISODateTimeFormat.{yearMonthDay, dateHourMinuteSecond}
 
-class SOAPDate(date: Date, dateFormatter: DateFormat) {
-  override def toString = dateFormatter.format(date)
+class SOAPDate(date: DateTime, dateFormatter: DateTimeFormatter) {
+  override def toString = dateFormatter.print(date)
   def toDate = date
 }
 
 object SOAPDate {
-  val shortFormatTemplate = "yyyy-MM-dd"
-  val longFormatTemplate = "yyyy-MM-dd'T'HH:mm:ss"
-  val shortDateFormatter: DateFormat = new SimpleDateFormat(shortFormatTemplate)
-  val longDateFormatter: DateFormat = new SimpleDateFormat(longFormatTemplate)
+  def apply(date: DateTime) = new SOAPDate(date, dateHourMinuteSecond)
+  def apply(dateText: String) = new SOAPDate(textToDate(dateText), dateHourMinuteSecond)
 
-  def apply(date: Date) = new SOAPDate(date, longDateFormatter)
-  def apply(dateText: String) = new SOAPDate(textToDate(dateText), longDateFormatter)
-
-  def textToDate(dateText: String): Date = {
-    try {
-      if (dateText.length == shortFormatTemplate.length)
-        shortDateFormatter.parse(dateText)
-      else
-        longDateFormatter.parse(dateText)
-    } catch {
-      case e: ParseException =>
-        throw new IllegalArgumentException(
-          s"Expected $dateText to be in supported date format ($longFormatTemplate or $shortFormatTemplate)"
-        )
-    }
+  def textToDate(dateText: String): DateTime = {
+    if (dateText.length == 10) //"yyyy-MM-dd".length
+      yearMonthDay.parseDateTime(dateText)
+    else
+      dateHourMinuteSecond.parseDateTime(dateText)
   }
 }
