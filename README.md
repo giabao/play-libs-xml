@@ -23,8 +23,10 @@ You may use this api if like me:
 More information on https://github.com/giabao/scala-soap
 
 ### Install
+scala-soap is [published](http://search.maven.org/#search|ga|1|g%3A%22com.sandinh%22%20scala-soap) to maven center.
+
 add to build.sbt:
-`libraryDependencies += "com.sandinh" %% "scala-soap" % "1.2.0"`
+`libraryDependencies += "com.sandinh" %% "scala-soap" % scalaSoapVersion`
 
 ### Changelogs
 see [CHANGES.md](CHANGES.md)
@@ -32,6 +34,8 @@ see [CHANGES.md](CHANGES.md)
 ### Licence
 This software is licensed under the Apache 2 license:
 http://www.apache.org/licenses/LICENSE-2.0
+
+Copyright 2014-2015 Sân Đình (http://sandinh.com)
 
 Credits to Pascal Voitot and Paweł Prażak for previous version of this codebase
 

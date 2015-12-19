@@ -1,4 +1,7 @@
 ### Changelogs
+##### v1.4.1
++ update play 2.4.6 (optional dependency), scala-xml 1.0.5, slf4j-api 1.7.13
+
 ##### v1.4.0
 + update play 2.4.2 (optional dependency). Note play 2.4.x require java 8
 
