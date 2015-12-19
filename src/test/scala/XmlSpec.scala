@@ -112,6 +112,9 @@ class XmlSpec extends Specification {
       Xml.fromXml[Int](<ab>123</ab>) must equalTo(Some(123))
       Xml.fromXml[Int](<ab>abc</ab>) must equalTo(None)
       Xml.fromXml[Int](<ab>12</ab> \\ "tag") must equalTo(None)
+      Xml.fromXml[Int](<ab> </ab>) must equalTo(None)
+      Xml.fromXml[Int](<ab></ab>) must equalTo(None)
+      Xml.fromXml[Int](<ab/>) must equalTo(None)
     }
 
     "deserialize Short accordingly to Some or None" in {
@@ -135,11 +138,41 @@ class XmlSpec extends Specification {
       Xml.fromXml[Double](<ab>123</ab>) must equalTo(Some(123))
       Xml.fromXml[Double](<ab>abc</ab>) must equalTo(None)
       Xml.fromXml[Double](<ab>12</ab> \\ "tag") must equalTo(None)
+      Xml.fromXml[Double](<ab> </ab>) must equalTo(None)
+      Xml.fromXml[Double](<ab></ab>) must equalTo(None)
+      Xml.fromXml[Double](<ab/>) must equalTo(None)
     }
     "deserialize Boolean accordingly to Some or None" in {
       Xml.fromXml[Boolean](<ab>true</ab>) must equalTo(Some(true))
       Xml.fromXml[Boolean](<ab>abc</ab>) must equalTo(None)
       Xml.fromXml[Boolean](<ab>12</ab> \\ "tag") must equalTo(None)
+      Xml.fromXml[Boolean](<ab></ab>) must equalTo(None)
+      Xml.fromXml[Boolean](<ab/>) must equalTo(None)
+    }
+
+    "deserialize String accordingly to Some or None" in {
+      Xml.fromXml[String](<ab>text</ab>) must equalTo(Some("text"))
+      Xml.fromXml[String](<ab>&lt;text&gt;</ab>) must equalTo(Some("<text>"))
+      Xml.fromXml[String](<ab> </ab>) must equalTo(Some(" "))
+      Xml.fromXml[String](<ab></ab>) must equalTo(Some(""))
+      Xml.fromXml[String](<ab/>) must beSome("")
+      Xml.fromXml[String](<ab></ab> \ "nb") must equalTo(None)
+    }
+
+    "deserialize List accordingly to Some empty or nonEmpty List, but not None" in {
+      Xml.fromXml[List[Int]](<l><nb>123</nb><nb>57</nb></l> \ "nb") must equalTo(Some(List(123, 57)))
+      Xml.fromXml[List[String]](<l><nb>123</nb><nb>57</nb></l> \ "nb") must equalTo(Some(List("123", "57")))
+      Xml.fromXml[List[String]](<l> </l> \ "nb") must beSome(List.empty[String])
+      Xml.fromXml[List[String]](<l> </l>) must beSome(List(" "))
+      Xml.fromXml[List[String]](<l></l>) must beSome(List(""))
+    }
+
+    "deserialize Map accordingly to Some empty or nonEmpty Map, but not None" in {
+      Xml.fromXml[Map[String, Int]](<m><item><key>alpha</key><value>23</value></item></m> \ "item") must equalTo(Some(Map("alpha" -> 23)))
+      Xml.fromXml[Map[String, Int]](<m><key>alpha</key><value>23</value></m>) must beSome(Map("alpha" -> 23))
+      Xml.fromXml[Map[String, Int]](<m></m> \ "item") must beSome(Map.empty[String, Int])
+      Xml.fromXml[Map[String, Int]](<m></m>) must beSome(Map.empty[String, Int])
+      Xml.fromXml[Map[String, Int]](<m> </m>) must beSome(Map.empty[String, Int])
     }
   }
 }
