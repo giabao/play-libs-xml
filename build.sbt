@@ -2,7 +2,7 @@ name := "scala-soap"
 
 organization := "com.sandinh"
 
-version := "1.4.1"
+version := "2.0.0-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
