@@ -4,11 +4,11 @@
 + split into `scala-soap` & `play-soap`. Only `play-soap` depend on `play-ws`.
 + update play-ws from 2.4.6 to 2.5.2
 + SoapWS11 & SoapWS12 is now deprecated. Use WS11 and inject wsClient instead.
-  Ex, see the test class com.sandinh.soap.VerifyEmailWS12:
+  Ex, see the test class [CurrencyByCountryWS12](play-soap/src/test/scala/com/sandinh/soap/GetCurrencyByCountry.scala#L45):
 ```scala
 @Singleton
-class VerifyEmailWS12 @Inject() (protected val wsClient: WSClient) extends WS12[Param, Result] {
-  protected def url = VerifyEmail.url
+class CurrencyByCountryWS12 @Inject() (protected val wsClient: WSClient) extends WS12[Param, Result] {
+  protected def url = "http://www.webservicex.net/country.asmx"
 }
 ```
 
