@@ -1,4 +1,17 @@
 ### Changelogs
+##### v1.6.0
++ update sbt 0.13.11, scala 2.11.8, slf4j-api 1.7.21, joda-time 2.9.3
++ split into `scala-soap` & `play-soap`. Only `play-soap` depend on `play-ws`.
++ update play-ws from 2.4.6 to 2.5.2
++ SoapWS11 & SoapWS12 is now deprecated. Use WS11 and inject wsClient instead.
+  Ex, see the test class com.sandinh.soap.VerifyEmailWS12:
+```scala
+@Singleton
+class VerifyEmailWS12 @Inject() (protected val wsClient: WSClient) extends WS12[Param, Result] {
+  protected def url = VerifyEmail.url
+}
+```
+
 ##### v1.5.0
 + break binary compatibility. You must re-compile your code when update scala-soap to this version.
 + SOAPDate - moved from using java.util.Date (not thread safe) to org.joda.time.DateTime

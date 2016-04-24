@@ -26,7 +26,13 @@ More information on https://github.com/giabao/scala-soap
 scala-soap is [published](http://search.maven.org/#search|ga|1|g%3A%22com.sandinh%22%20scala-soap) to maven center.
 
 add to build.sbt:
-`libraryDependencies += "com.sandinh" %% "scala-soap" % scalaSoapVersion`
+```
+libraryDependencies += "com.sandinh" %% "scala-soap" % scalaSoapVersion
+```
+Or:
+```
+libraryDependencies += "com.sandinh" %% "play-soap" % playSoapVersion
+```
 
 ### Changelogs
 see [CHANGES.md](CHANGES.md)
