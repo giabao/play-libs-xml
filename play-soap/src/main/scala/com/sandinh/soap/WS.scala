@@ -7,8 +7,7 @@ package com.sandinh.soap
 import com.sandinh.xml.{XmlReader, XmlWriter}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.libs.ws.{WS => PlayWS}
-import play.api.Play.current
+import play.api.libs.ws.WSClient
 import play.api.http.HeaderNames._
 import scala.xml.NamespaceBinding
 import org.slf4j.LoggerFactory
@@ -18,6 +17,8 @@ trait WS[P, R] {
 
   protected def url: String
 
+  protected def wsClient: WSClient
+
   def call(param: P)(implicit w: XmlWriter[P], r: XmlReader[R]): Future[R]
 
   protected final def call(param: P, ns: NamespaceBinding, hdrs: (String, String)*)   // format: OFF
@@ -26,7 +27,7 @@ trait WS[P, R] {
     val data = ("<?xml version='1.0' encoding='UTF-8'?>" + s).getBytes("UTF-8")
     val headers = hdrs :+ (CONTENT_LENGTH -> data.length.toString)
     logger.debug("-->{}\n{}\n{}", url, headers, s)
-    PlayWS.url(url)
+    wsClient.url(url)
       .withHeaders(headers: _*)
       .post(data)
       .map { res =>
@@ -51,13 +52,9 @@ trait WS11[P, R] extends WS[P, R] {
     call(param, SOAP.SoapNS, ct, actionHeader)
 }
 
-class SoapWS11[P, R](val url: String, val action: String) extends WS11[P, R]
-
 trait WS12[P, R] extends WS[P, R] {
   @inline private def ct = CONTENT_TYPE -> "application/soap+xml; charset=utf-8"
 
   def call(param: P)(implicit w: XmlWriter[P], r: XmlReader[R]): Future[R] =
     call(param, SOAP.SoapNS12, ct)
 }
-
-class SoapWS12[P, R](val url: String) extends WS12[P, R]
