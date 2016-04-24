@@ -25,8 +25,7 @@ lazy val `scala-soap` = project
       "joda-time"               % "joda-time"       % "2.9.3",
       "org.joda"                % "joda-convert"    % "1.8.1",
       "org.specs2"              %% "specs2-core"    % "3.6.6" % Test
-    ),
-    testOptions in Test += Tests.Exclude(Seq("Specs2FutureSpec"))
+    )
   )
 
 val playVersion = "2.5.2"
