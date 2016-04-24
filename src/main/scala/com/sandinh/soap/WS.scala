@@ -7,7 +7,7 @@ package com.sandinh.soap
 import com.sandinh.xml.{XmlReader, XmlWriter}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.libs.ws.{WS => PlayWS, InMemoryBody}
+import play.api.libs.ws.{WS => PlayWS}
 import play.api.Play.current
 import play.api.http.HeaderNames._
 import scala.xml.NamespaceBinding
@@ -26,13 +26,9 @@ trait WS[P, R] {
     val data = ("<?xml version='1.0' encoding='UTF-8'?>" + s).getBytes("UTF-8")
     val headers = hdrs :+ (CONTENT_LENGTH -> data.length.toString)
     logger.debug("-->{}\n{}\n{}", url, headers, s)
-    //we can NOT just call post(data) because (a bug?) play 2.3.0-RC1 will add "application/octet-stream" to CONTENT_TYPE header
-    //@see play.api.libs.ws.WSRequestHolder.withBody
     PlayWS.url(url)
       .withHeaders(headers: _*)
-      .withMethod("POST")
-      .withBody(InMemoryBody(data))
-      .execute()
+      .post(data)
       .map { res =>
         logger.debug("<--\n{}", res.body)
         //if we use `val x = res.xml` then `testOnly com.sandinh.soap.WSSpec` sometimes throw
