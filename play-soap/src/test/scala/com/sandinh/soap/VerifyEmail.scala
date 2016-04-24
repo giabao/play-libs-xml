@@ -8,21 +8,22 @@ import com.sandinh.soap.DefaultImplicits._
 
 /** @see [[http://ws.cdyne.com/emailverify/Emailvernotestemail.asmx?op=VerifyEmail]] */
 object VerifyEmail {
-  case class Param(email: String, LicenseKey: String)
+  case class Param(email: String, timeout: Int, LicenseKey: String)
   case class Result(ResponseText: String, ResponseCode: Int, LastMailServer: String, GoodEmail: Boolean)
 
   implicit object ParamXmlW extends XmlWriter[Param] {
     def write(t: Param, base: NodeSeq): NodeSeq =
-      <VerifyEmail xmlns="http://ws.cdyne.com/">
+      <AdvancedVerifyEmail xmlns="http://ws.cdyne.com/">
         <email>{ t.email }</email>
+        <timeout>{ t.timeout }</timeout>
         <LicenseKey>{ t.LicenseKey }</LicenseKey>
-      </VerifyEmail>
+      </AdvancedVerifyEmail>
   }
 
   implicit object ResultXmlR extends XmlReader[Result] {
     def read(x: NodeSeq): Option[Result] =
       for {
-        r <- (x \ "VerifyEmailResponse" \ "VerifyEmailResult").headOption
+        r <- (x \ "AdvancedVerifyEmailResponse" \ "AdvancedVerifyEmailResult").headOption
         txt <- Xml.fromXml[String](r \ "ResponseText")
         code <- Xml.fromXml[Int](r \ "ResponseCode")
         srv <- Xml.fromXml[String](r \ "LastMailServer")
@@ -34,7 +35,7 @@ object VerifyEmail {
 
   object MySoapWS11 extends SoapWS11[Param, Result](
     url,
-    "http://ws.cdyne.com/VerifyEmail"
+    "http://ws.cdyne.com/AdvancedVerifyEmail"
   )
 
   object MySoapWS12 extends SoapWS12[Param, Result](url)

@@ -22,7 +22,7 @@ class WSSpec(implicit ee: ExecutionEnv) extends PlaySpecification {
   "WS" should {
     "callable VerifyEmail" >> new WithApplication {
       import VerifyEmail._
-      def test(ws: WS[Param, Result]) = ws.call(Param("not.found.user@gmail.com", "foo"))
+      def test(ws: WS[Param, Result]) = ws.call(Param("not.found.user@gmail.com", 20, "foo"))
         .map(_.GoodEmail) must beFalse.awaitFor(timeOut)
 
       test(app.injector.instanceOf[VerifyEmailWS11])
