@@ -16,6 +16,8 @@ lazy val commonSettings = formatSetting +: Seq(
   scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-feature", "-target:jvm-1.8", "-Ybackend:GenBCode")
 )
 
+val slf4jBind = "org.slf4j" % "slf4j-simple" % "1.7.21"
+
 lazy val `scala-soap` = project
   .settings(commonSettings: _*)
   .settings(
@@ -24,19 +26,20 @@ lazy val `scala-soap` = project
       "org.slf4j"               % "slf4j-api"       % "1.7.21",
       "joda-time"               % "joda-time"       % "2.9.3",
       "org.joda"                % "joda-convert"    % "1.8.1",
-      "org.specs2"              %% "specs2-core"    % "3.6.6" % Test
+      "org.specs2"              %% "specs2-core"    % "3.6.6" % Test,
+      slf4jBind % Test
     )
   )
 
-val playVersion = "2.5.2"
+def play(module: String) = "com.typesafe.play" %% s"play-$module" % "2.5.2"
 
 lazy val `play-soap` = project
   .dependsOn(`scala-soap`)
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
-      "com.typesafe.play"       %% "play-ws"        % playVersion,
-      "com.typesafe.play"       %% "play-specs2"    % playVersion % Test
+      play("ws"), play("specs2") % Test,
+      slf4jBind % Test
     )
   )
 
