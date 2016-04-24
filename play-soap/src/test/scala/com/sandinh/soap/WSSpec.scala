@@ -20,13 +20,14 @@ class WSSpec(implicit ee: ExecutionEnv) extends PlaySpecification {
   //  }
 
   "WS" should {
-    "callable VerifyEmail" >> new WithApplication {
-      import VerifyEmail._
-      def test(ws: WS[Param, Result]) = ws.call(Param("not.found.user@gmail.com", 20, "foo"))
-        .map(_.GoodEmail) must beFalse.awaitFor(timeOut)
+    "callable Calculator" >> new WithApplication {
+      import Calculator._
+      val p = Param(0.5f, 6.34f)
+      def test(ws: WS[Param, Result]) =
+        ws.call(p).map(_.r) must beEqualTo(p.x + p.y).awaitFor(timeOut)
 
-      test(app.injector.instanceOf[VerifyEmailWS11])
-      test(app.injector.instanceOf[VerifyEmailWS12])
+      test(app.injector.instanceOf[CalculatorWS11])
+      test(app.injector.instanceOf[CalculatorWS12])
 
       test(MySoapWS11)
       test(MySoapWS12)
