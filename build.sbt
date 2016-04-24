@@ -1,33 +1,45 @@
-name := "scala-soap"
+import scalariform.formatter.preferences._
 
-organization := "com.sandinh"
+lazy val formatSetting = scalariformPreferences := scalariformPreferences.value
+  .setPreference(AlignParameters, true)
+  .setPreference(AlignSingleLineCaseStatements, true)
+  .setPreference(DoubleIndentClassDeclaration, true)
+  .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
+  //  .setPreference(ScaladocCommentsStopOnLastLine, true)
+  .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
+  .setPreference(SpacesAroundMultiImports, false)
 
-version := "1.5.0"
-
-scalaVersion := "2.11.8"
-
-scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-feature", "-target:jvm-1.8", "-Ybackend:GenBCode")
-
-resolvers += Resolver.bintrayRepo("scalaz", "releases")
-
-libraryDependencies ++= Seq(
-  "org.slf4j"               % "slf4j-api"       % "1.7.21",
-  "org.scala-lang.modules"  %% "scala-xml"      % "1.0.5",
-  "joda-time"               % "joda-time"       % "2.9.3",
-  "org.joda"                % "joda-convert"    % "1.8.1",
-  "com.typesafe.play"       %% "play-ws"        % "2.4.6"   % Optional,
-  "org.specs2"              %% "specs2-junit"   % "3.6.6"   % Test, //see Specs2FutureSpec
-  "org.specs2"              %% "specs2-mock"    % "3.6.6"   % Test, //see Specs2FutureSpec
-  "com.typesafe.play"       %% "play-specs2"    % "2.4.6"   % Test
+lazy val commonSettings = formatSetting +: Seq(
+  organization := "com.sandinh",
+  version := "1.6.0-SNAPSHOT",
+  scalaVersion := "2.11.8",
+  scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-feature", "-target:jvm-1.8", "-Ybackend:GenBCode")
 )
 
-//misc - to mute intellij warning when load sbt project
-//@see: sbt command> test:whatDependsOn xalan serializer 2.7.1
-dependencyOverrides ++= Set(
-  "xalan" % "serializer" % "2.7.2",
-  "org.scala-lang.modules"  %% "scala-parser-combinators" % "1.0.4",
-  "org.scala-lang.modules"  %% "scala-xml" % "1.0.5",
-  "org.scala-lang" % "scala-reflect" % scalaVersion.value
-)
+lazy val `scala-soap` = project
+  .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.scala-lang.modules"  %% "scala-xml"      % "1.0.5",
+      "org.slf4j"               % "slf4j-api"       % "1.7.21",
+      "joda-time"               % "joda-time"       % "2.9.3",
+      "org.joda"                % "joda-convert"    % "1.8.1",
+      "org.specs2"              %% "specs2-core"    % "3.6.6" % Test
+    ),
+    testOptions in Test += Tests.Exclude(Seq("Specs2FutureSpec"))
+  )
 
-testOptions in Test += Tests.Exclude(Seq("Specs2FutureSpec"))
+val playVersion = "2.5.2"
+
+lazy val `play-soap` = project
+  .dependsOn(`scala-soap`)
+  .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      "com.typesafe.play"       %% "play-ws"        % playVersion,
+      "com.typesafe.play"       %% "play-specs2"    % playVersion % Test
+    )
+  )
+
+lazy val root = (project in file("."))
+  .aggregate(`scala-soap`, `play-soap`)
