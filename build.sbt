@@ -11,7 +11,7 @@ lazy val formatSetting = scalariformPreferences := scalariformPreferences.value
 
 lazy val commonSettings = formatSetting +: Seq(
   organization := "com.sandinh",
-  version := "1.6.0-SNAPSHOT",
+  version := "1.6.0",
   scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-feature", "-target:jvm-1.8", "-Ybackend:GenBCode")
 )
@@ -45,3 +45,5 @@ lazy val `play-soap` = project
 
 lazy val root = (project in file("."))
   .aggregate(`scala-soap`, `play-soap`)
+  .settings(commonSettings: _*)
+  .settings(publishArtifact := false)
