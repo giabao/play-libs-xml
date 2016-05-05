@@ -11,7 +11,7 @@ lazy val formatSetting = scalariformPreferences := scalariformPreferences.value
 
 lazy val commonSettings = formatSetting +: Seq(
   organization := "com.sandinh",
-  version := "1.6.0",
+  version := "1.6.1",
   scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-feature", "-target:jvm-1.8", "-Ybackend:GenBCode")
 )
@@ -31,7 +31,7 @@ lazy val `scala-soap` = project
     )
   )
 
-def play(module: String) = "com.typesafe.play" %% s"play-$module" % "2.5.2"
+def play(module: String) = "com.typesafe.play" %% s"play-$module" % "2.5.3"
 
 lazy val `play-soap` = project
   .dependsOn(`scala-soap`)
@@ -43,7 +43,7 @@ lazy val `play-soap` = project
     )
   )
 
-lazy val root = (project in file("."))
+lazy val scalaSoapRoot = (project in file("."))
   .aggregate(`scala-soap`, `play-soap`)
   .settings(commonSettings: _*)
   .settings(publishArtifact := false)

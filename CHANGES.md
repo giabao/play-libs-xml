@@ -1,4 +1,7 @@
 ### Changelogs
+##### v1.6.1
++ update play 2.5.3
+
 ##### v1.6.0
 + update sbt 0.13.11, scala 2.11.8, slf4j-api 1.7.21, joda-time 2.9.3
 + split into `scala-soap` & `play-soap`. Only `play-soap` depend on `play-ws`.
