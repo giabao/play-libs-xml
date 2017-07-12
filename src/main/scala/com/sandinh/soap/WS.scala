@@ -4,12 +4,16 @@
   */
 package com.sandinh.soap
 
+import java.io.{ByteArrayInputStream, InputStream}
+
 import com.sandinh.xml.{XmlReader, XmlWriter}
+
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.libs.ws.{WS => PlayWS, InMemoryBody}
+import play.api.libs.ws.{InMemoryBody, WS => PlayWS}
 import play.api.Play.current
 import play.api.http.HeaderNames._
+
 import scala.xml.NamespaceBinding
 import org.slf4j.LoggerFactory
 
@@ -39,7 +43,7 @@ trait WS[P, R] {
         //ClassCastException: : org.apache.xerces.parsers.XIncludeAwareParserConfiguration cannot be cast to org.apache.xerces.xni.parser.XMLParserConfiguration  (null:-1)
         //@see http://www.ibm.com/developerworks/websphere/library/techarticles/0310_searle/searle.html
         //@see http://xerces.apache.org/xerces2-j/faq-general.html#faq-5
-        val x = xml.XML.loadString(res.body)
+        val x = xml.XML.load(new ByteArrayInputStream(res.bodyAsBytes))
         SOAP.fromSOAP[R](x).get
       }
   }
