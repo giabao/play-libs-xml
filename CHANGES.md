@@ -1,4 +1,15 @@
 ### Changelogs
+##### v1.7.0
++ cross compile for scala 2.12.3 & 2.11.11
++ update play 2.6.3
++ update scala-xml 1.0.6, slf4j-api 1.7.25, joda-time 2.9.9, joda-convert 1.8.3
+// TODO remove joda-time depencency
++ update sbt 1.0.1, sbt-sonatype 2.0, sbt-pgp 1.1.0
++ use sbt-coursier
++ use sbt-scalafmt-coursier instead fo sbt-scalariform
++ move source code to github.com/ohze/scala-soap
++ remove deprecated classes SoapWS11 & SoapWS12
+
 ##### v1.6.1
 + update play 2.5.3
 
@@ -53,7 +64,7 @@ class CurrencyByCountryWS12 @Inject() (protected val wsClient: WSClient) extends
 
 ##### v1.0.0
 + Change package to com.sandinh
-+ Add com.sandinh.soap.WS. Usage: see [WSSpec](https://github.com/giabao/scala-soap/blob/master/src/test/scala/com/sandinh/soap/WSSpec.scala)
++ Add com.sandinh.soap.WS. Usage: see [WSSpec](https://github.com/ohze/scala-soap/blob/master/src/test/scala/com/sandinh/soap/WSSpec.scala)
 + Optional depends on "play" (require if you use WS)
 
 ##### v0.9.0

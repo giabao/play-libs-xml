@@ -28,7 +28,7 @@ trait WS[P, R] {
     val headers = hdrs :+ (CONTENT_LENGTH -> data.length.toString)
     logger.debug("-->{}\n{}\n{}", url, headers, s)
     wsClient.url(url)
-      .withHeaders(headers: _*)
+      .addHttpHeaders(headers: _*)
       .post(data)
       .map { res =>
         logger.debug("<--\n{}", res.body)

@@ -24,13 +24,6 @@ object GetCurrencyByCountry {
         s <- Xml.fromXml[String](r \ "GetCurrencyByCountryResult")
       } yield Result(s)
   }
-
-  object MySoapWS11 extends SoapWS11[Param, Result](
-    "http://www.webservicex.net/country.asmx",
-    "http://www.webserviceX.NET/GetCurrencyByCountry"
-  )
-
-  object MySoapWS12 extends SoapWS12[Param, Result]("http://www.webservicex.net/country.asmx")
 }
 
 import GetCurrencyByCountry._

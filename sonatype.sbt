@@ -1,4 +1,13 @@
-pomExtra in Global := <url>https://github.com/giabao/scala-soap</url>
+publishMavenStyle := true
+
+publishTo in Global := Some(
+  if (isSnapshot.value)
+    Opts.resolver.sonatypeSnapshots
+  else
+    Opts.resolver.sonatypeStaging
+)
+
+pomExtra in Global := <url>https://github.com/ohze/scala-soap</url>
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -7,8 +16,8 @@ pomExtra in Global := <url>https://github.com/giabao/scala-soap</url>
     </license>
   </licenses>
   <scm>
-    <url>git@github.com:giabao/scala-soap.git</url>
-    <connection>scm:git:git@github.com:giabao/scala-soap.git</connection>
+    <url>git@github.com:ohze/scala-soap.git</url>
+    <connection>scm:git:git@github.com:ohze/scala-soap.git</connection>
   </scm>
   <developers>
     <developer>

@@ -28,9 +28,6 @@ class WSSpec(implicit ee: ExecutionEnv) extends PlaySpecification {
 
       test(app.injector.instanceOf[CalculatorWS11])
       test(app.injector.instanceOf[CalculatorWS12])
-
-      test(MySoapWS11)
-      test(MySoapWS12)
     }
 
     "callable GetCurrencyByCountry" >> new WithApplication {
@@ -41,9 +38,6 @@ class WSSpec(implicit ee: ExecutionEnv) extends PlaySpecification {
 
       test(app.injector.instanceOf[CurrencyByCountryWS11])
       test(app.injector.instanceOf[CurrencyByCountryWS12])
-
-      test(MySoapWS11)
-      test(MySoapWS12)
     }
   }
 }

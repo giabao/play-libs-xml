@@ -28,13 +28,6 @@ object Calculator {
   }
 
   val url = "http://ws1.parasoft.com/glue/calculator"
-
-  object MySoapWS11 extends SoapWS11[Param, Result](
-    url,
-    "add"
-  )
-
-  object MySoapWS12 extends SoapWS12[Param, Result](url)
 }
 
 import Calculator._
@@ -42,7 +35,7 @@ import Calculator._
 @Singleton
 class CalculatorWS11 @Inject() (protected val wsClient: WSClient) extends WS11[Param, Result] {
   protected def url = Calculator.url
-  protected def action = MySoapWS11.action
+  protected def action = "add"
 }
 
 @Singleton
