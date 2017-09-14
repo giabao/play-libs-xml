@@ -18,8 +18,6 @@ lazy val `scala-soap` = project
     libraryDependencies ++= Seq(
       "org.scala-lang.modules"  %% "scala-xml"      % "1.0.6",
       "org.slf4j"               % "slf4j-api"       % "1.7.25",
-      "joda-time"               % "joda-time"       % "2.9.9",
-      "org.joda"                % "joda-convert"    % "1.8.3",
       "org.specs2"              %% "specs2-core"    % "3.9.5" % Test,
       slf4jBind
     )
