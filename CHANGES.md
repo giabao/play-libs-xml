@@ -1,4 +1,16 @@
 ### Changelogs
+##### v1.8.0
++ update scala 2.12.4, 2.11.12
++ update play 2.6.7 & remove dependencies joda-time, joda-convert
++ update sbt 1.0.3, sbt-coursier 1.0.0-RC13
+
+break changes caused by migrate from joda-time to java.time:
++ `SOAPDate(date: org.joda.time.DateTime, dateFormatter: org.joda.time.format.DateTimeFormatter)`
+=>
+`SOAPDate(date: java.time.ZonedDateTime, dateFormatter: java.time.format.DateTimeFormatter)`
++ `SOAPDate("some invalid date")` is previously `throwA[IllegalArgumentException]`
+=> now `throwA[DateTimeParseException]`
+
 ##### v1.7.0
 + cross compile for scala 2.12.3 & 2.11.11
 + update play 2.6.3

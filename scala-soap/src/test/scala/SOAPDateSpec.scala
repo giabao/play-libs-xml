@@ -1,6 +1,8 @@
+import java.time.format.DateTimeParseException
+
 import org.specs2.mutable._
 import com.sandinh.soap.SOAPDate
-import org.joda.time.{DateTimeZone, DateTime}
+import java.time.{Instant, ZoneId, ZonedDateTime}
 
 class SOAPDateSpec extends Specification {
 
@@ -17,11 +19,11 @@ class SOAPDateSpec extends Specification {
     }
 
     "parse SOAP format new DateTime from UNIX 0" in {
-      SOAPDate(new DateTime(0L, DateTimeZone.UTC)).toString === "1970-01-01T00:00:00"
+      SOAPDate(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC"))).toString === "1970-01-01T00:00:00"
     }
 
     "throw IllegalArgumentException on invalid format" in {
-      SOAPDate("bzdura") must throwA[IllegalArgumentException]
+      SOAPDate("bzdura") must throwA[DateTimeParseException]
     }
   }
 }

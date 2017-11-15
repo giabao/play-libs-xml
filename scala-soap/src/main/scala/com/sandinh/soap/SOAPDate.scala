@@ -1,22 +1,22 @@
 package com.sandinh.soap
 
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.format.ISODateTimeFormat.{yearMonthDay, dateHourMinuteSecond}
+import java.time.{LocalDate, LocalDateTime, ZoneId, ZonedDateTime}
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-class SOAPDate(date: DateTime, dateFormatter: DateTimeFormatter) {
-  override def toString = dateFormatter.print(date)
-  def toDate = date
+class SOAPDate(date: ZonedDateTime, dateFormatter: DateTimeFormatter) {
+  override def toString: String = dateFormatter.format(date)
+  def toDate: ZonedDateTime = date
 }
 
 object SOAPDate {
-  def apply(date: DateTime) = new SOAPDate(date, dateHourMinuteSecond)
-  def apply(dateText: String) = new SOAPDate(textToDate(dateText), dateHourMinuteSecond)
+  def apply(date: ZonedDateTime) = new SOAPDate(date, ISO_LOCAL_DATE_TIME)
+  def apply(dateText: String) = new SOAPDate(textToDate(dateText), ISO_LOCAL_DATE_TIME)
 
-  def textToDate(dateText: String): DateTime = {
+  def textToDate(dateText: String): ZonedDateTime = {
     if (dateText.length == 10) //"yyyy-MM-dd".length
-      yearMonthDay.parseDateTime(dateText)
+      LocalDate.parse(dateText).atStartOfDay(ZoneId.systemDefault())
     else
-      dateHourMinuteSecond.parseDateTime(dateText)
+      LocalDateTime.parse(dateText).atZone(ZoneId.systemDefault())
   }
 }

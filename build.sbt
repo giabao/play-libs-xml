@@ -1,8 +1,8 @@
 lazy val commonSettings = Seq(
   organization := "com.sandinh",
-  version := "1.7.0",
-  scalaVersion := "2.12.3",
-  crossScalaVersions := Seq("2.12.3", "2.11.11"),
+  version := "1.8.0",
+  scalaVersion := "2.12.4",
+  crossScalaVersions := Seq("2.12.4", "2.11.12"),
   scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-feature", "-target:jvm-1.8"),
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, 11)) => Seq("-Ybackend:GenBCode")
@@ -10,22 +10,18 @@ lazy val commonSettings = Seq(
   })
 )
 
-val slf4jBind = "org.slf4j" % "slf4j-simple" % "1.7.25" % Test
-
 lazy val `scala-soap` = project
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
       "org.scala-lang.modules"  %% "scala-xml"      % "1.0.6",
       "org.slf4j"               % "slf4j-api"       % "1.7.25",
-      "joda-time"               % "joda-time"       % "2.9.9",
-      "org.joda"                % "joda-convert"    % "1.8.3",
       "org.specs2"              %% "specs2-core"    % "3.9.5" % Test,
-      slf4jBind
+      "ch.qos.logback"          % "logback-classic" % "1.2.3" % Test
     )
   )
 
-def play(module: String) = "com.typesafe.play" %% s"play-$module" % "2.6.3"
+def play(module: String) = "com.typesafe.play" %% s"play-$module" % "2.6.7"
 
 lazy val `play-soap` = project
   .dependsOn(`scala-soap`)
@@ -33,8 +29,7 @@ lazy val `play-soap` = project
   .settings(
     libraryDependencies ++= Seq(
       play("ahc-ws"),
-      play("specs2") % Test,
-      slf4jBind
+      play("specs2") % Test
     )
   )
 
