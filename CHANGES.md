@@ -7,7 +7,7 @@
 break changes caused by migrate from joda-time to java.time:
 + `SOAPDate(date: org.joda.time.DateTime, dateFormatter: org.joda.time.format.DateTimeFormatter)`
 =>
-`SOAPDate(date: java.time.ZonedDateTime, dateFormatter: java.time.format.DateTimeFormatter)`
+`SOAPDate(date: java.time.LocalDateTime, dateFormatter: java.time.format.DateTimeFormatter)`
 + `SOAPDate("some invalid date")` is previously `throwA[IllegalArgumentException]`
 => now `throwA[DateTimeParseException]`
 
