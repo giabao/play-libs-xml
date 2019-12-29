@@ -3,7 +3,6 @@ package com.sandinh.xml
 import scala.util.Try
 import scala.xml.Attribute
 import com.sandinh.soap.{DefaultImplicits, SOAPDate}
-import scala.collection.generic.CanBuildFrom
 import scala.language.{implicitConversions, higherKinds}
 
 trait XmlReader[T] {
@@ -56,7 +55,7 @@ trait BasicReaders {
   }
 }
 
-trait SpecialReaders {
+trait SpecialReaders extends IterableReader {
   implicit def OptionReader[T](implicit r: XmlReader[T]): XmlReader[Option[T]] = new XmlReader[Option[T]] {
     def read(x: xml.NodeSeq): Option[Option[T]] = {
       x.collectFirst {
@@ -66,16 +65,6 @@ trait SpecialReaders {
           }) None
           else r.read(e)
       } orElse Some(None)
-    }
-  }
-
-  implicit def traversableReader[F[_], A](implicit bf: CanBuildFrom[F[_], A, F[A]], r: XmlReader[A]): XmlReader[F[A]] = new XmlReader[F[A]] {
-    def read(x: xml.NodeSeq): Option[F[A]] = {
-      val builder = bf()
-      x.foreach {
-        n => r.read(n) foreach builder.+=
-      }
-      Some(builder.result())
     }
   }
 
