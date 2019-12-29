@@ -1,4 +1,11 @@
 ### Changelogs
+##### v1.9.0
++ support scala 2.13 & drop support for scala 2.11
++ update slf4j-api 1.7.29, scala-xml 1.2.0
++ update play-ahs-ws 2.8.0 (a dependency of play-ws)
++ also update sbt 1.3.5, & sbt plugins
++ update .travis.yml for testing on (openjdk8, 11) x (scala 2.13.1, 2.12.10)
+
 ##### v1.8.0
 + update scala 2.12.4, 2.11.12
 + update play 2.6.7 & remove dependencies joda-time, joda-convert
