@@ -1,28 +1,24 @@
-sudo: required
-dist: trusty
+dist: xenial
 language: scala
 
+jdk:
+  - openjdk8
+  - openjdk11
 scala:
-- 2.11.12
-- 2.12.4
-
-env:
-- JDK=oraclejdk8
-- JDK=openjdk8
-
-before_script:
-  - jdk_switcher use $JDK
+  - 2.13.1
+  - 2.12.10
 
 script:
   - sbt ++$TRAVIS_SCALA_VERSION test
 
-# These directories are cached to S3 at the end of the build
+before_cache:
+# Cleanup the cached directories to avoid unnecessary cache updates
+- find $HOME/.ivy2/cache -name "ivydata-*.properties" -print -delete
+- find $HOME/.sbt        -name "*.lock"               -print -delete
+
 cache:
   directories:
-    - $HOME/.ivy2/cache/
-    - $HOME/.sbt/boot/
-
-before_cache:
-  # Tricks to avoid unnecessary cache updates
-  - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
-  - find $HOME/.sbt -name "*.lock" -delete
+  - $HOME/.m2
+  - $HOME/.ivy2/cache
+  - $HOME/.sbt
+  - $HOME/.coursier
