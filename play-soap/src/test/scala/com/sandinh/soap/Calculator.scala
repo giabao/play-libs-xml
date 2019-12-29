@@ -6,28 +6,28 @@ import play.api.libs.ws.WSClient
 import scala.xml.NodeSeq
 import com.sandinh.soap.DefaultImplicits._
 
-/** @see [[http://www.service-repository.com/operation/show?operation=add&portType=ICalculator&id=12]] */
+/** @see [[http://www.dneonline.com/calculator.asmx?op=Add]] */
 object Calculator {
-  case class Param(x: Float, y: Float)
-  case class Result(r: Float)
+  case class Param(x: Int, y: Int)
+  case class Result(r: Int)
 
   implicit object ParamXmlW extends XmlWriter[Param] {
     def write(t: Param, base: NodeSeq): NodeSeq =
-      <ns1:add xmlns:ns1="http://www.parasoft.com/wsdl/calculator/">
-        <ns1:x>{ t.x }</ns1:x>
-        <ns1:y>{ t.y }</ns1:y>
-      </ns1:add>
+      <Add xmlns="http://tempuri.org/">
+        <intA>{t.x}</intA>
+        <intB>{t.y}</intB>
+      </Add>
   }
 
   implicit object ResultXmlR extends XmlReader[Result] {
     def read(x: NodeSeq): Option[Result] =
       for {
-        res <- (x \ "addResponse").headOption
-        r <- Xml.fromXml[Float](res \ "Result")
+        res <- (x \ "AddResponse").headOption
+        r <- Xml.fromXml[Int](res \ "AddResult")
       } yield Result(r)
   }
 
-  val url = "http://ws1.parasoft.com/glue/calculator"
+  val url = "http://www.dneonline.com/calculator.asmx"
 }
 
 import Calculator._
@@ -35,7 +35,7 @@ import Calculator._
 @Singleton
 class CalculatorWS11 @Inject() (protected val wsClient: WSClient) extends WS11[Param, Result] {
   protected def url = Calculator.url
-  protected def action = "add"
+  protected def action = "http://tempuri.org/Add"
 }
 
 @Singleton
